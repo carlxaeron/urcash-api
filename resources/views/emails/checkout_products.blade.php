@@ -19,6 +19,6 @@
         @endforeach
         </ul>
         <p>Subtotal: &#8369; {{ $subtotal }}</p>
-        <p>We, at UrCash thank you for your continued patronage!</p>
+        <p>We, at G2GBox thank you for your continued patronage!</p>
     </div>
 @endsection

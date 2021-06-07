@@ -7,9 +7,9 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/license.svg" alt="License"></a>
 </p>
 
-## About UrCash
+## About G2GBox
 
-UrCash Digital Wallet App is a Progressive Web Application designed to streamline electronic transactions efficiently. Merchants are able to add products of their business to the system and customers can purchase them without the hassle of using physical money. Instead, electronic funds are used as payment. In this day and age, digital transactions are booming as more and more businesses switch to mobile applications to handle online transactions. 
+G2GBox Digital Wallet App is a Progressive Web Application designed to streamline electronic transactions efficiently. Merchants are able to add products of their business to the system and customers can purchase them without the hassle of using physical money. Instead, electronic funds are used as payment. In this day and age, digital transactions are booming as more and more businesses switch to mobile applications to handle online transactions. 
 
 The application provides a QR scanner functionality that reads barcodes and QR codes of products and merchants, respectively. These QR codes are used to uniquely identify the entities that reside in the application. For instance, barcodes are used to identify the product and once scanned, details are provided by the merchant who will then be able to sell that product to its customers. QR codes for merchants are automatically generated upon registration and the customers can use the QR codes to pay for their purchases.
 

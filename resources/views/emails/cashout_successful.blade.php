@@ -24,7 +24,7 @@
             <li>Fee: {{ $fee }}</li>
             <li>Currency: PHP</li>
         </ul>
-        <p>We, at UrCash thank you for your continued patronage!</p>
+        <p>We, at G2GBox thank you for your continued patronage!</p>
 
     </div>
 @endsection
