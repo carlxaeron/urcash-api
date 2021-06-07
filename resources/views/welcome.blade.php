@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>URCASH</title>
+        <title>G2GBox</title>
 
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet">
@@ -68,7 +68,7 @@
 
             <div class="content">
                 <div class="title m-b-md">
-                    WELCOME TO URCASH API
+                    WELCOME TO G2GBox API
                 </div>
             </div>
         </div>

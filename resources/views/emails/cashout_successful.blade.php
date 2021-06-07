@@ -9,7 +9,7 @@
     <h3>Hello {{ $first_name }} {{ $last_name }},</h3>
     <div class="offset-md-1 col-md-10 text-center">
 
-    <p>Greetings from URCASH digital wallet!</p>
+    <p>Greetings from G2GBox digital wallet!</p>
 
     <p>Please be informed that your cashout request was approved and transfer to your account {{ $payment_method }}</p>
 

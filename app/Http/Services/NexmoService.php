@@ -19,8 +19,8 @@ class SendService
 
         $client->message()->send([
             'to' => $mobileNumber,
-            'from' => 'URCASH',
-            'text' => $otp.' This is your URCASH OTP valid for the next 5 minutes.'
+            'from' => 'G2GBox',
+            'text' => $otp.' This is your G2GBox OTP valid for the next 5 minutes.'
         ]);
 
         return $otp;
