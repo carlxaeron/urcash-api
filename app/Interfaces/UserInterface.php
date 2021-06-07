@@ -1,0 +1,191 @@
+<?php
+
+namespace App\Interfaces;
+
+use Illuminate\Http\Request;
+
+interface UserInterface
+{
+    /**
+     * Login user
+     *
+     * @method  Post api/login
+     * @access  public
+     */
+    public function login(Request $request);
+
+    /**
+     * Get all users
+     *
+     * @method  GET api/users
+     * @access  public
+     */
+    public function getAllUsers();
+
+    /**
+     * Get User By ID
+     *
+     * @param   integer     $id
+     *
+     * @method  GET api/users/{id}
+     * @access  public
+     */
+    public function getUserById($id);
+
+    /**
+     * Create support ticket based on mobile_number, email and birthdate
+     *
+     * @method  POST api/request_review_account
+     * @access  public
+     */
+    public function requestReviewUnlockAccount(Request $request);
+
+    /**
+     * Set MPIN of user
+     *
+     * @param   \Illuminate\Http\Request    $request
+     *
+     * @access  public
+     */
+    public function setMpin(Request $request);
+
+    /**
+     * Send reset password link via email by using the user's mobile_number
+     *
+     * @param   \Illuminate\Http\Request    $request
+     *
+     * @access  public
+     */
+    public function sendResetPasswordLinkEmail(Request $request);
+
+    /**
+     * Reset user password by providing new password
+     *
+     * @param   \Illuminate\Http\Request    $request
+     *
+     * @access  public
+     */
+    public function resetPasswordWithToken(Request $request);
+
+    /**
+     * Create user
+     *
+     * @param   \Illuminate\Http\Request    $request
+     *
+     * @method  POST    api/register-user       For Create
+     * @access  public
+     */
+    public function registerUser(Request $request);
+
+    /**
+     * Update user
+     *
+     * @param   integer $id
+     * @param   \Illuminate\Http\Request    $request
+     *
+     * @method  POST    api/update-user       For Create
+     * @access  public
+     */
+    public function updateUser(Request $request, $id);
+
+    /**
+     * Delete user
+     *
+     * @param   integer     $id
+     *
+     * @method  DELETE  api/users/{id}
+     * @access  public
+     */
+    public function deleteUser($id);
+
+    /**
+     * Logout user
+     *
+     * @param   \Illuminate\Http\Request    $request
+     *
+     * @method  POST  api/logout
+     * @access  public
+     */
+    public function logout();
+
+    /**
+     * Get user by mobile number
+     *
+     * @param   $mobile_number
+     *
+     * @access  public
+     */
+    public function getUserByMobileNumber($mobile_number);
+
+    /**
+     * Update OTP and send
+     *
+     * @param   $mobile_number
+     * @method  POST  api/logout
+     * @access  public
+     */
+    public function updateOtpAndSend($mobile_number);
+
+    /**
+     * validate OTP
+     *
+     * @param   \Illuminate\Http\Request    $request
+     *
+     * @access  public
+     */
+    public function validateOtp(Request $request);
+
+    /**
+     * reset Password
+     *
+     * @param   \Illuminate\Http\Request    $request
+     *
+     * @access  public
+     */
+    public function resetPassword(Request $request);
+
+    /**
+     * Login using mpin
+     *
+     * @param   \Illuminate\Http\Request    $request
+     *
+     * @access  public
+     */
+    public function mpinLogin(Request $request);
+
+    /**
+     * Update user profile picture
+     *
+     * @param   \Illuminate\Http\Request    $request
+     * @param   User   $id
+     *
+     * @access  public
+     */
+    public function updateProfilePicture(Request $request, $id);
+
+    /**
+     * Register Admin
+     *
+     * @param   \Illuminate\Http\Request    $request
+     *
+     * @access  public
+     */
+    public function registerAdmin(Request $request);
+
+    /**
+     * Update Admin
+     *
+     * @param   \Illuminate\Http\Request    $request
+     * @param   User   $id
+     *
+     * @access  public
+     */
+    public function updateAdmin(Request $request, $id);
+
+     /**
+     * get Admins
+     *
+     * @access  public
+     */
+    public function getAdmins();
+}
