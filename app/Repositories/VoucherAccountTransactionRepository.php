@@ -103,7 +103,7 @@ class VoucherAccountTransactionRepository implements VoucherAccountTransactionIn
 
                 $transaction[] = [
                     'ref_number' => $trans->ref_number,
-                    'transaction_type'=>$transactionType->name,
+                    'transaction_type'=>$transactionType->name ?? 'Unknown',
                     'fee' => number_format($fee, 2, '.', ''),
                     'amount' =>  $amount,
                     'created_at' => $trans->created_at->format('Y-m-d h:i:sa')
