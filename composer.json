@@ -15,6 +15,7 @@
         "intervention/image": "^2.5",
         "laravel/framework": "^7.24",
         "laravel/passport": "^9.3",
+        "laravel/telescope": "v3.5.1",
         "laravel/tinker": "^2.0",
         "laravel/ui": "^2.4",
         "nexmo/client": "^2.0"
