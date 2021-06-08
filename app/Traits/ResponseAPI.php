@@ -2,6 +2,8 @@
 
 namespace App\Traits;
 
+use Exception;
+
 trait ResponseAPI
 {
     /**
@@ -14,23 +16,32 @@ trait ResponseAPI
      */
     public function coreResponse($message, $data = null, $statusCode, $isSuccess = true)
     {
-        // Check the params
-        if(!$message) return response()->json(['message' => 'Message is required'], 500);
+        try {
+            // Check the params
+            if(!$message) return response()->json(['message' => 'Message is required'], 500);
 
-        // Send the response
-        if($isSuccess) {
-            return response()->json([
-                'message' => $message,
-                'error' => false,
-                'statusCode' => $statusCode,
-                'results' => $data
-            ], $statusCode);
-        } else {
+            // Send the response
+            if($isSuccess) {
+                return response()->json([
+                    'message' => $message,
+                    'error' => false,
+                    'statusCode' => $statusCode,
+                    'results' => $data
+                ], $statusCode);
+            } else {
+                return response()->json([
+                    'message' => $message,
+                    'error' => true,
+                    'statusCode' => $statusCode,
+                ], $statusCode);
+            }
+        } catch (Exception $e) {
+            logger($e);
             return response()->json([
                 'message' => $message,
                 'error' => true,
                 'statusCode' => $statusCode,
-            ], $statusCode);
+            ], 500);
         }
     }
 
