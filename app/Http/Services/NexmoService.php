@@ -21,7 +21,6 @@ class SendService
 
         if(config('app.env') == 'local') {
             $user = User::where('mobile_number', $mobileNumber)->first();
-            // dd($user);
             Mail::raw($MESSAGE, function ($message) use($user) {
                 $message->to($user->email)->subject('OTP');
             });
