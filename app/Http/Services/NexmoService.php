@@ -19,13 +19,13 @@ class SendService
 
         $MESSAGE = $otp.' This is your G2GBox OTP valid for the next 5 minutes.';
 
-        if(config('app.env') == 'local') {
-            $user = User::where('mobile_number', $mobileNumber)->first();
-            Mail::raw($MESSAGE, function ($message) use($user) {
-                $message->to($user->email)->subject('OTP');
-            });
-        }
-        else {
+        // if(config('app.env') == 'local') {
+        //     $user = User::where('mobile_number', $mobileNumber)->first();
+        //     Mail::raw($MESSAGE, function ($message) use($user) {
+        //         $message->to($user->email)->subject('OTP');
+        //     });
+        // }
+        // else {
             $basic  = new \Nexmo\Client\Credentials\Basic( env('NEXMO_API_KEY'),  env('NEXMO_API_SECRET'));
             $client = new \Nexmo\Client($basic);
     
@@ -34,7 +34,7 @@ class SendService
                 'from' => 'G2GBox',
                 'text' => $MESSAGE
             ]);
-        }
+        // }
         return $otp;
     }
 
