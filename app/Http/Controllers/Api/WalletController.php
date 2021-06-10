@@ -71,7 +71,7 @@ class WalletController extends Controller
             $request->mobile_number,
             "Fund",
             $result['txn_id'],
-            "AEX fund wallet",
+            "G2GBox fund wallet",
             "Dragonpay",
             $request->amount,
             $fee
