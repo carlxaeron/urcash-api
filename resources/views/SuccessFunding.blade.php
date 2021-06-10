@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>AEX INVOICE</title>
+    <title>G2GBox INVOICE</title>
 
     <style>
     .invoice-box {
