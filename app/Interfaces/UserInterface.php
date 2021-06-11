@@ -15,6 +15,14 @@ interface UserInterface
     public function login(Request $request);
 
     /**
+     * Login user
+     *
+     * @method  Post api/v1/login
+     * @access  public
+     */
+    public function loginV1(Request $request);
+
+    /**
      * Get all users
      *
      * @method  GET api/users

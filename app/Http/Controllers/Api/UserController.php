@@ -40,6 +40,17 @@ class UserController extends Controller
     }
 
     /**
+     * Login user v1
+     *
+     * @param  \App\Http\Request ; $request
+     * @return \Illuminate\Http\Response
+     */
+    public function loginV1(Request $request)
+    {
+        return $this->userInterface->loginV1($request);
+    }
+
+    /**
      * Create support ticket based on mobile_number, email and birthdate
      */
     public function requestReviewUnlockAccount(Request $request)

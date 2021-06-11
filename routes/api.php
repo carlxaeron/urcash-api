@@ -320,3 +320,8 @@ Route::get('/processor/{id}', 'Api\PayoutProcessorController@show');
 Route::post('/processor/{id}/update', 'Api\PayoutProcessorController@update');
 Route::post('/processor/{id}/delete', 'Api\PayoutProcessorController@delete');
 Route::post('/processor/create', 'Api\PayoutProcessorController@create');
+
+// B2B
+Route::prefix('/v1')->group(function () {
+    Route::post('login', [App\Http\Controllers\Api\UserController::class, 'loginV1']);
+});
