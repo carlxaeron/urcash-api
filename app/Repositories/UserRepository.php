@@ -11,6 +11,7 @@ use App\VoucherAccount;
 use App\Http\Helper\Utils\GenerateRandomIntegers;
 use App\Http\Helper\Utils\UploadImage;
 use App\Http\Services\NexmoService\SendService;
+use App\Http\Services\RedService;
 use App\Interfaces\UserInterface;
 use App\Mail\HasTooManyLoginAttempts;
 use App\Mail\VerifyEmail;
@@ -29,6 +30,7 @@ use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use App\UsersRole;
+use Exception;
 
 class UserRepository implements UserInterface
 {
@@ -40,6 +42,79 @@ class UserRepository implements UserInterface
 
     public function username() { // Override default username in ThrottlesLogins trait for validation
         return 'mobile_number';
+    }
+
+    public function loginV1WithRed(Request $request){
+        try {
+            $inputs = [
+                'email' => $request->email,
+                'password' => $request->password,
+            ];
+            $rules = [
+                'email' => 'required',
+                'password' => 'required'
+            ];
+
+            $validation = Validator::make($inputs, $rules, [
+                'email.required' => 'Username is required'
+            ]);
+
+            if ($validation->fails()) return $this->error($validation->errors()->all());
+            else {
+                $resp = app(RedService::class)->login($request);
+                if($resp['status'] == 'error') {
+                    return $this->error($resp['message'],$resp['code']);
+                }
+                else if($resp['status'] == 'success') {
+                    $user = User::where('email', $resp['message'][0]['email'])->first();
+
+                    if(!$user) {
+                        return $this->success(RedService::$ERR_SUCCESS_NOT_YET_REGISTERED,$resp['message'],202);
+                    } else {
+                        return $this->success("Login success", [
+                            'token'=>Str::uuid()
+                        ]);
+                    }
+                }
+                else {
+                    return $this->error('Unknown Error. Please try again.');
+                }
+            }
+            
+
+        } catch (Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function loginV1(Request $request)
+    {
+        try {
+            $inputs = [
+                'email' => $request->email,
+                'password' => $request->password,
+            ];
+            $rules = [
+                'email' => 'required|email:rfc,strict',
+                'password' => 'required'
+            ];
+
+            $validation = Validator::make($inputs, $rules);
+
+            if ($validation->fails()) return $this->error($validation->errors()->all());
+            $user = User::where('email', $request->email)->first();
+
+            if(!$user) return $this->error('Email is not yet registered.');
+            else {
+                if (!$user->is_locked) {
+                    return $this->success("Login success", [
+                        'token'=>Str::uuid()
+                    ]);
+                }
+            }
+        } catch (Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
     }
 
     public function login(Request $request)

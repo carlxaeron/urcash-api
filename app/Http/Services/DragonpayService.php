@@ -63,7 +63,7 @@ class DragonpayService
             'txnid' => $this->GenerateTnxId(),
             'amount' => $amount,
             'ccy' => 'PHP',
-            'description' =>  "G2GBox Fund wallet",
+            'description' =>  "B2B Fund wallet",
             'email' =>  $email
         );
 

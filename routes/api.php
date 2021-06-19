@@ -15,10 +15,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('test', function(){
-    echo Hash::make('password');
-});
-
 // User
 Route::post('login', 'Api\UserController@login');
 Route::post('mpin','Api\UserController@mpinLogin');
@@ -320,3 +316,14 @@ Route::get('/processor/{id}', 'Api\PayoutProcessorController@show');
 Route::post('/processor/{id}/update', 'Api\PayoutProcessorController@update');
 Route::post('/processor/{id}/delete', 'Api\PayoutProcessorController@delete');
 Route::post('/processor/create', 'Api\PayoutProcessorController@create');
+
+// B2B
+Route::prefix('/v1')->group(function () {
+    Route::post('login', [App\Http\Controllers\Api\UserController::class, 'loginV1']);
+    Route::post('login-with-red', [App\Http\Controllers\Api\UserController::class, 'loginV1WithRed']);
+
+    Route::middleware(['role:administrator'])->group(function () {
+        // Categories
+        Route::post('category', [App\Http\Controllers\Api\CategoryController::class, 'store']);
+    });
+});

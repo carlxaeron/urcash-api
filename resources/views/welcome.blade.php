@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>G2GBox</title>
+        <title>B2B</title>
 
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet">
@@ -68,7 +68,7 @@
 
             <div class="content">
                 <div class="title m-b-md">
-                    WELCOME TO G2GBox API
+                    WELCOME TO B2B API
                 </div>
             </div>
         </div>

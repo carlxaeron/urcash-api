@@ -3,7 +3,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>G2GBox - @yield('title')</title>
+    <title>B2B - @yield('title')</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
@@ -35,7 +35,7 @@
 <body>
     <header class="container row">
         <div class="col" id="website-title">
-            <h2>G2GBox</h2>
+            <h2>B2B</h2>
         </div>
     </header>
 
@@ -43,11 +43,11 @@
         @yield('content')
 
         <p>All the best,</p>
-        <p>G2GBox Customer Support Team</p>
+        <p>B2B Customer Support Team</p>
     </section>
 
     <footer class="container text-center">
-        <p style="text-align: center;">Copyright &copy; 2020 G2GBox. All rights reserved.</p>
+        <p style="text-align: center;">Copyright &copy; 2020 B2B. All rights reserved.</p>
     </footer>
 </body>
 </html>
