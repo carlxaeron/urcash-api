@@ -23,6 +23,14 @@ interface UserInterface
     public function loginV1(Request $request);
 
     /**
+     * Login user with RED account
+     *
+     * @method  Post api/v1/login-with-red
+     * @access  public
+     */
+    public function loginV1WithRed(Request $request);
+
+    /**
      * Get all users
      *
      * @method  GET api/users
