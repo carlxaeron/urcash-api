@@ -7,7 +7,7 @@
 @section('content')
     <h3>Hello, {{ $first_name }} {{ $last_name }}!</h3>
     <div class="offset-md-1 col-md-10 text-center">
-        <p>Thank you for registering at G2GBox! We are glad to have you on-board with us. To verify your email, please enter the code below:</p>
+        <p>Thank you for registering at B2B! We are glad to have you on-board with us. To verify your email, please enter the code below:</p>
         <div class="container" style="margin: 12px; text-align: center;">
             <span class="circle-bordered-dark-blue" id="verification-code"><strong>{{ $code }}</strong></span>
         </div>

@@ -324,4 +324,9 @@ Route::post('/processor/create', 'Api\PayoutProcessorController@create');
 // B2B
 Route::prefix('/v1')->group(function () {
     Route::post('login', [App\Http\Controllers\Api\UserController::class, 'loginV1']);
+
+    Route::middleware(['role:administrator'])->group(function () {
+        // Categories
+        Route::post('category', [App\Http\Controllers\Api\CategoryController::class, 'store']);
+    });
 });
