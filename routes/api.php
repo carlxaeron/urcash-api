@@ -319,8 +319,14 @@ Route::post('/processor/create', 'Api\PayoutProcessorController@create');
 
 // B2B
 Route::prefix('/v1')->group(function () {
+    //Login
     Route::post('login', [App\Http\Controllers\Api\UserController::class, 'loginV1']);
     Route::post('login-with-red', [App\Http\Controllers\Api\UserController::class, 'loginV1WithRed']);
+
+    Route::post('validate-otp', 'Api\UserController@validateOtpV1');
+
+    //Register
+    Route::post('register', [App\Http\Controllers\Api\UserController::class, 'registerV1']);
 
     Route::middleware(['role:administrator'])->group(function () {
         // Categories
