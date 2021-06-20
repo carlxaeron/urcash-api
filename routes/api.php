@@ -328,8 +328,12 @@ Route::prefix('/v1')->group(function () {
     //Register
     Route::post('register', [App\Http\Controllers\Api\UserController::class, 'registerV1']);
 
-    Route::middleware(['role:administrator'])->group(function () {
-        // Categories
-        Route::post('category', [App\Http\Controllers\Api\CategoryController::class, 'store']);
+    // Requires TOKEN
+    Route::middleware('auth:api')->group(function () {
+        // Admin Role
+        Route::middleware(['role:administrator'])->group(function () {
+            // Categories
+            Route::post('category', [App\Http\Controllers\Api\CategoryController::class, 'store']);
+        });
     });
 });
