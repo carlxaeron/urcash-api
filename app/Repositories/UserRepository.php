@@ -70,11 +70,15 @@ class UserRepository implements UserInterface
                     $user = User::where('email', $resp['message'][0]['email'])->first();
 
                     if(!$user) {
-                        return $this->success(RedService::$ERR_SUCCESS_NOT_YET_REGISTERED,$resp['message'],202);
+                        $_resp = $resp['message'][0];
+                        return $this->success(RedService::$ERR_SUCCESS_NOT_YET_REGISTERED,$_resp,202);
                     } else {
-                        return $this->success("Login success", [
-                            'token'=>Str::uuid()
-                        ]);
+                        $token = array(
+                            'token' => $user->createToken('Auth Token')->accessToken,
+                            'user'=>$user
+                        );
+                        
+                        return $this->success("Login success", $token);
                     }
                 }
                 else {
@@ -333,6 +337,7 @@ class UserRepository implements UserInterface
                 'birth_date' => $request->birth_date,
                 'password' => $request->password,
                 'repeat_password' => $request->repeat_password,
+                'code' => $request->code,
             ];
             $rules = [
                 'last_name' => 'required',
@@ -348,23 +353,48 @@ class UserRepository implements UserInterface
                 'password' => 'required|min:6',
                 'repeat_password' => 'required|same:password',
             ];
+            if($request->code) {
+                $rules['code'] = ['sometimes',function($attr,$value,$fail) {
+                    if($value !== 'RED') $fail('Invalid Code');
+                }];
+            }
+
+            if($request->code == 'RED') {
+                unset($rules['password']);
+                unset($rules['repeat_password']);
+            }
+
             $validation = Validator::make($inputs, $rules);
 
             if ($validation->fails()) return $this->error($validation->errors()->all());
 
             $inputs['birthdate'] = $inputs['birth_date'];
-            
-            // Create User
-            $user = User::create($inputs);
 
-            $otp = app(Helper::class)->generateCode();
-            $user->otp = $otp;
-            $user->save();
+            if($request->code == 'RED') {
+                // Create User
+                $user = User::create($inputs);
 
-            // Send verification email with code
-            Mail::to($user)->send(new VerifyEmail($user, $otp));
+                $token = array(
+                    'token' => $user->createToken('Auth Token')->accessToken,
+                    'user'=>$user
+                );
 
-            DB::commit();
+                DB::commit();
+
+                return $this->success("Successfully created!", $token);
+            } else {
+                // Create User
+                $user = User::create($inputs);
+    
+                $otp = app(Helper::class)->generateCode();
+                $user->otp = $otp;
+                $user->save();
+    
+                // Send verification email with code
+                Mail::to($user)->send(new VerifyEmail($user, $otp));
+                
+                DB::commit();
+            }
             return $this->success("Successfully created!", $user);
         } catch (Exception $e) {
             DB::rollback();

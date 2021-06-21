@@ -319,17 +319,25 @@ Route::post('/processor/create', 'Api\PayoutProcessorController@create');
 
 // B2B
 Route::prefix('/v1')->group(function () {
-    //Login
+    // Login
     Route::post('login', [App\Http\Controllers\Api\UserController::class, 'loginV1']);
     Route::post('login-with-red', [App\Http\Controllers\Api\UserController::class, 'loginV1WithRed']);
 
     Route::post('validate-otp', 'Api\UserController@validateOtpV1');
 
-    //Register
+    // Register
     Route::post('register', [App\Http\Controllers\Api\UserController::class, 'registerV1']);
 
+    // Products
+    Route::get('/products', 'Api\ProductController@indexV1');
+
+    
     // Requires TOKEN
     Route::middleware('auth:api')->group(function () {
+        Route::post('/product/{id}', 'Api\ProductController@updateV1');
+        Route::delete('/product/{id}', 'Api\ProductController@deleteV1');
+        Route::post('/product', 'Api\ProductController@createV1');
+
         // Admin Role
         Route::middleware(['role:administrator'])->group(function () {
             // Categories

@@ -16,10 +16,10 @@ class CreateProductsTable extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->string('sku')->nullable();
-            $table->string('ean');
+            $table->string('ean')->nullable();
             $table->string('name');
-            $table->string('manufacturer_name');
-            $table->string('variant');
+            $table->string('manufacturer_name')->nullable();
+            $table->string('variant')->nullable();
             $table->boolean('is_verified')->default(0);
             $table->timestamps();
         });

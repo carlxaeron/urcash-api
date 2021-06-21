@@ -15,8 +15,8 @@ class CreatePricesTable extends Migration
     {
         Schema::create('prices', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('shop_id');
-            $table->foreign('shop_id')->references('id')->on('shops'); // Foreign key: Shops model
+            $table->unsignedBigInteger('shop_id')->nullable();
+            // $table->foreign('shop_id')->references('id')->on('shops'); // Foreign key: Shops model
             $table->unsignedBigInteger('product_id');
             $table->foreign('product_id')->references('id')->on('products'); // Foreign key: Products model
             $table->float('price')->nullable();
