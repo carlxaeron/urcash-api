@@ -11,6 +11,14 @@ class Price extends Model
         'shop_id', 'product_id', 'price',
     ];
 
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+        'id',
+        'shop_id',
+        'product_id',
+    ];
+
     /**
      * Serialize timestamps as datetime strings without the timezone.
      */

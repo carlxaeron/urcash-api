@@ -71,12 +71,14 @@ class UserRepository implements UserInterface
 
                     if(!$user) {
                         $_resp = $resp['message'][0];
-                        // $_resp['code'] = encrypt(RedService::class);
                         return $this->success(RedService::$ERR_SUCCESS_NOT_YET_REGISTERED,$_resp,202);
                     } else {
-                        return $this->success("Login success", [
-                            'token'=>Str::uuid()
-                        ]);
+                        $token = array(
+                            'token' => $user->createToken('Auth Token')->accessToken,
+                            'user'=>$user
+                        );
+                        
+                        return $this->success("Login success", $token);
                     }
                 }
                 else {
@@ -350,10 +352,12 @@ class UserRepository implements UserInterface
                 'birth_date' => 'required|date',
                 'password' => 'required|min:6',
                 'repeat_password' => 'required|same:password',
-                'code' => ['sometimes',function($attr,$value,$fail) {
-                    if($value !== 'RED') $fail('Invalid Code');
-                }],
             ];
+            if($request->code) {
+                $rules['code'] = ['sometimes',function($attr,$value,$fail) {
+                    if($value !== 'RED') $fail('Invalid Code');
+                }];
+            }
 
             if($request->code == 'RED') {
                 unset($rules['password']);
@@ -375,6 +379,8 @@ class UserRepository implements UserInterface
                     'user'=>$user
                 );
 
+                DB::commit();
+
                 return $this->success("Successfully created!", $token);
             } else {
                 // Create User
@@ -386,8 +392,9 @@ class UserRepository implements UserInterface
     
                 // Send verification email with code
                 Mail::to($user)->send(new VerifyEmail($user, $otp));
+                
+                DB::commit();
             }
-            DB::commit();
             return $this->success("Successfully created!", $user);
         } catch (Exception $e) {
             DB::rollback();

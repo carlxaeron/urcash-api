@@ -23,6 +23,9 @@ class ProductController extends Controller
     public function index() {
         return $this->productInterface->getAllProducts();
     }
+    public function indexV1() {
+        return $this->productInterface->getAllProductsV1();
+    }
 
     /**
      * Get product by ID
@@ -86,6 +89,9 @@ class ProductController extends Controller
     public function update(Request $request, $id) {
         return $this->productInterface->updateProduct($request, $id);
     }
+    public function updateV1(Request $request, $id) {
+        return $this->productInterface->updateProductV1($request, $id);
+    }
 
     /**
      * Delete product
@@ -93,11 +99,17 @@ class ProductController extends Controller
     public function delete($id) {
         return $this->productInterface->deleteProduct($id);
     }
+    public function deleteV1($id) {
+        return $this->productInterface->deleteProductV1($id);
+    }
 
     /**
      * Create product
      */
     public function create(Request $request) {
         return $this->productInterface->createProduct($request);
+    }
+    public function createV1(Request $request) {
+        return $this->productInterface->createProductV1($request);
     }
 }

@@ -34,11 +34,11 @@ class UserSeeder extends Seeder
         ));
 
         $user = User::create(array(
-            'first_name' => 'Christian',
-            'middle_name' => 'Penaranda',
-            'last_name' => 'Penaranda',
-            'mobile_number' => '639102282342',
-            'email' => 'api@thrivemedia.phh',
+            'first_name' => 'Carl',
+            'middle_name' => 'V',
+            'last_name' => 'Manuel',
+            'mobile_number' => '639953076751',
+            'email' => 'carlxaeron09@gmail.com',
             'password' => $password,
             'address_id' => $address->id
         ));
@@ -61,12 +61,12 @@ class UserSeeder extends Seeder
         ));
 
         $user2 = User::create(array(
-            'first_name' => 'Kevin',
-            'middle_name' => 'Tibayan',
-            'last_name' => 'Decena',
+            'first_name' => 'Carl2',
+            'middle_name' => 'V2',
+            'last_name' => 'Manuel2',
             'birthdate' => '1995-04-09',
-            'mobile_number' => '639277174174',
-            'email' => 'documentations@thrivemedia.ph',
+            'mobile_number' => '639301075863',
+            'email' => 'carllouismanuel09@gmail.com',
             'password' => $password,
             'address_id' => $address2->id
         ));
