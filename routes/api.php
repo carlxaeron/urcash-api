@@ -325,5 +325,7 @@ Route::prefix('/v1')->group(function () {
     Route::middleware(['role:administrator'])->group(function () {
         // Categories
         Route::post('category', [App\Http\Controllers\Api\CategoryController::class, 'store']);
+        // Products
+        Route::get('products', 'Api\VoucherOrderController@countPendingRequest');
     });
 });
