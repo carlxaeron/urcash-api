@@ -334,7 +334,7 @@ Route::prefix('/v1')->group(function () {
     
     // Requires TOKEN
     Route::middleware('auth:api')->group(function () {
-        Route::post('/product/{id}', 'Api\ProductController@updateV1');
+        Route::put('/product/{id}', 'Api\ProductController@updateV1');
         Route::delete('/product/{id}', 'Api\ProductController@deleteV1');
         Route::post('/product', 'Api\ProductController@createV1');
 
@@ -342,6 +342,7 @@ Route::prefix('/v1')->group(function () {
         // Route::middleware(['role:administrator'])->group(function () {
             // Categories
             Route::post('category', [App\Http\Controllers\Api\CategoryController::class, 'store']);
+            Route::put('category/{id}', [App\Http\Controllers\Api\CategoryController::class, 'update']);
         // });
     });
 });

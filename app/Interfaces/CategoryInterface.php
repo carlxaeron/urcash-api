@@ -11,4 +11,12 @@ interface CategoryInterface {
      * @access  public
      */
     public function createCategory(Request $request);
+
+    /**
+     * Update Category
+     *
+     * @method  POST api/v1/category/{id}
+     * @access  public
+     */
+    public function updateCategory(Request $request, $category);
 }

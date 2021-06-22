@@ -41,4 +41,39 @@ class CategoryRepository implements CategoryInterface {
             return $this->error($e->getMessage());
         }
     }
+
+    public function updateCategory(Request $request, $category)
+    {
+        DB::beginTransaction();
+
+        $category = $category->find($request->id);
+        if(!$category) return $this->error('Category not found.');
+
+        if($category->name == strtoupper($request->name)) return $this->error('No update.');
+
+        try {
+            $inputs = [
+                'name' => $request->name,
+            ];
+            $rules = [
+                'name' => ['required',function($attr,$value,$fail) use($category, $request) {
+                    if( $category->name != strtoupper($request->name) 
+                    && Category::where('name', strtoupper($value))->count()) $fail("The category is already exists!");
+                }
+                ],
+            ];
+            $validation = Validator::make($inputs, $rules);
+
+            if ($validation->fails()) return $this->error($validation->errors()->all());
+
+            $create = $category->update($inputs);
+
+            DB::commit();
+
+            return $this->success('Successfully updated.', $create, 204);
+        } catch (Exception $e) {
+            DB::rollback();
+            return $this->error($e->getMessage());
+        }
+    }
 }
