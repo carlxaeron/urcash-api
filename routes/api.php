@@ -338,10 +338,10 @@ Route::prefix('/v1')->group(function () {
         Route::delete('/product/{id}', 'Api\ProductController@deleteV1');
         Route::post('/product', 'Api\ProductController@createV1');
 
-        // Admin Role
-        Route::middleware(['role:administrator'])->group(function () {
+        // // Admin Role
+        // Route::middleware(['role:administrator'])->group(function () {
             // Categories
             Route::post('category', [App\Http\Controllers\Api\CategoryController::class, 'store']);
-        });
+        // });
     });
 });

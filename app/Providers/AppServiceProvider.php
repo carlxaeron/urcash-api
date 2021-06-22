@@ -126,6 +126,10 @@ class AppServiceProvider extends ServiceProvider
             'App\Interfaces\WalletTransactionInterface',
             'App\Repositories\WalletTransactionRepository'
         );
+        $this->app->bind(
+            'App\Interfaces\CategoryInterface',
+            'App\Repositories\CategoryRepository'
+        );
     }
 
     /**
