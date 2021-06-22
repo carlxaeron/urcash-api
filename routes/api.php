@@ -343,6 +343,7 @@ Route::prefix('/v1')->group(function () {
             // Categories
             Route::post('category', [App\Http\Controllers\Api\CategoryController::class, 'store']);
             Route::put('category/{id}', [App\Http\Controllers\Api\CategoryController::class, 'update']);
+            Route::delete('category/{id}', [App\Http\Controllers\Api\CategoryController::class, 'destroy']);
         // });
     });
 });

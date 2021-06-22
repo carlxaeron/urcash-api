@@ -76,4 +76,19 @@ class CategoryRepository implements CategoryInterface {
             return $this->error($e->getMessage());
         }
     }
+
+    public function deleteCategory(Request $request, $category) {
+        DB::beginTransaction();
+
+        $category = $category->find($request->id);
+        if(!$category) return $this->error('Category not found.');
+
+        try {
+            $category->delete();
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollback();
+        }
+    }
 }

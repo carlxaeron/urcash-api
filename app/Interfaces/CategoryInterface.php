@@ -19,4 +19,12 @@ interface CategoryInterface {
      * @access  public
      */
     public function updateCategory(Request $request, $category);
+
+    /**
+     * Delete Category
+     *
+     * @method  POST api/v1/category/{id}
+     * @access  public
+     */
+    public function deleteCategory(Request $request, $category);
 }
