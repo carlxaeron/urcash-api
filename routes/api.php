@@ -331,17 +331,21 @@ Route::prefix('/v1')->group(function () {
     // Products
     Route::get('/products', 'Api\ProductController@indexV1');
 
+    // Category
+    Route::get('category', [App\Http\Controllers\Api\CategoryController::class, 'index']);
     
     // Requires TOKEN
     Route::middleware('auth:api')->group(function () {
-        Route::post('/product/{id}', 'Api\ProductController@updateV1');
+        Route::put('/product/{id}', 'Api\ProductController@updateV1');
         Route::delete('/product/{id}', 'Api\ProductController@deleteV1');
         Route::post('/product', 'Api\ProductController@createV1');
 
-        // Admin Role
-        Route::middleware(['role:administrator'])->group(function () {
+        // // Admin Role
+        // Route::middleware(['role:administrator'])->group(function () {
             // Categories
             Route::post('category', [App\Http\Controllers\Api\CategoryController::class, 'store']);
-        });
+            Route::put('category/{id}', [App\Http\Controllers\Api\CategoryController::class, 'update']);
+            Route::delete('category/{id}', [App\Http\Controllers\Api\CategoryController::class, 'destroy']);
+        // });
     });
 });
