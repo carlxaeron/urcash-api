@@ -13,6 +13,13 @@ class CategoryRepository implements CategoryInterface {
     // Use ResponseAPI Trait in this repository
     use ResponseAPI;
 
+    public function listCategory()
+    {
+        $data = Category::all();
+
+        return $this->success('Successfully fetched the list.', $data);
+    }
+
     public function createCategory(Request $request)
     {
         DB::beginTransaction();

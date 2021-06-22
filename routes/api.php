@@ -331,6 +331,8 @@ Route::prefix('/v1')->group(function () {
     // Products
     Route::get('/products', 'Api\ProductController@indexV1');
 
+    // Category
+    Route::get('category', [App\Http\Controllers\Api\CategoryController::class, 'index']);
     
     // Requires TOKEN
     Route::middleware('auth:api')->group(function () {
