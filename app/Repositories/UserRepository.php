@@ -9,6 +9,7 @@ use App\User;
 use App\VerificationCode;
 use App\VoucherAccount;
 use App\Http\Helper\Utils\GenerateRandomIntegers;
+use App\Http\Helper\Utils\Helper;
 use App\Http\Helper\Utils\UploadImage;
 use App\Http\Services\NexmoService\SendService;
 use App\Http\Services\RedService;
@@ -69,11 +70,15 @@ class UserRepository implements UserInterface
                     $user = User::where('email', $resp['message'][0]['email'])->first();
 
                     if(!$user) {
-                        return $this->success(RedService::$ERR_SUCCESS_NOT_YET_REGISTERED,$resp['message'],202);
+                        $_resp = $resp['message'][0];
+                        return $this->success(RedService::$ERR_SUCCESS_NOT_YET_REGISTERED,$_resp,202);
                     } else {
-                        return $this->success("Login success", [
-                            'token'=>Str::uuid()
-                        ]);
+                        $token = array(
+                            'token' => $user->createToken('Auth Token')->accessToken,
+                            'user'=>$user
+                        );
+                        
+                        return $this->success("Login success", $token);
                     }
                 }
                 else {
@@ -107,9 +112,12 @@ class UserRepository implements UserInterface
             if(!$user) return $this->error('Email is not yet registered.');
             else {
                 if (!$user->is_locked) {
-                    return $this->success("Login success", [
-                        'token'=>Str::uuid()
-                    ]);
+                    $token = array(
+                        'token' => $user->createToken('Auth Token')->accessToken,
+                        'user'=>$user
+                    );
+
+                    return $this->success("Login success", $token);
                 }
             }
         } catch (Exception $e) {
@@ -313,6 +321,84 @@ class UserRepository implements UserInterface
             return $this->success("Your password has been reset", $user);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function registerUserV1(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $inputs = [
+                'last_name' => $request->last_name,
+                'first_name' => $request->first_name,
+                'middle_name' => $request->middle_name,
+                'mobile_number' => $request->mobile_number,
+                'email' => $request->email,
+                'birth_date' => $request->birth_date,
+                'password' => $request->password,
+                'repeat_password' => $request->repeat_password,
+                'code' => $request->code,
+            ];
+            $rules = [
+                'last_name' => 'required',
+                'first_name' => 'required',
+                'middle_name' => 'required',
+                'mobile_number' => ['required','numeric','starts_with:63','digits:12',function($attr,$value,$fail){
+                    if(User::where('mobile_number',$value)->first()) $fail("Sorry! The $attr is already exists!");
+                }],
+                'email' => ['required','email',function($attr,$value,$fail){
+                    if(User::where('email',$value)->first()) $fail("Sorry! The $attr is already exists!");
+                }],
+                'birth_date' => 'required|date',
+                'password' => 'required|min:6',
+                'repeat_password' => 'required|same:password',
+            ];
+            if($request->code) {
+                $rules['code'] = ['sometimes',function($attr,$value,$fail) {
+                    if($value !== 'RED') $fail('Invalid Code');
+                }];
+            }
+
+            if($request->code == 'RED') {
+                unset($rules['password']);
+                unset($rules['repeat_password']);
+            }
+
+            $validation = Validator::make($inputs, $rules);
+
+            if ($validation->fails()) return $this->error($validation->errors()->all());
+
+            $inputs['birthdate'] = $inputs['birth_date'];
+
+            if($request->code == 'RED') {
+                // Create User
+                $user = User::create($inputs);
+
+                $token = array(
+                    'token' => $user->createToken('Auth Token')->accessToken,
+                    'user'=>$user
+                );
+
+                DB::commit();
+
+                return $this->success("Successfully created!", $token);
+            } else {
+                // Create User
+                $user = User::create($inputs);
+    
+                $otp = app(Helper::class)->generateCode();
+                $user->otp = $otp;
+                $user->save();
+    
+                // Send verification email with code
+                Mail::to($user)->send(new VerifyEmail($user, $otp));
+                
+                DB::commit();
+            }
+            return $this->success("Successfully created!", $user);
+        } catch (Exception $e) {
+            DB::rollback();
+            return $this->error($e->getMessage(), (int) $e->getCode());
         }
     }
 
@@ -548,6 +634,35 @@ class UserRepository implements UserInterface
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
+    }
+
+    public function validateOtpV1(Request $request)
+    {
+        $inputs = [
+            'email' => $request->email,
+            'otp' => $request->otp
+        ];
+        $rules = [
+            'email' => 'required',
+            'otp' => 'required|numeric|digits:4'
+        ];
+        $validation = Validator::make($inputs, $rules);
+
+        if ($validation->fails()) return $this->error($validation->errors()->all());
+
+        $user = User::where('email',$request->email)->where('otp',$request->otp)->first();
+
+        if(!$user) return $this->error('Invalid Code. Please try again.');
+
+        $user->email_verified_at = now();
+        $user->save();
+
+        $token = array(
+            'token' => $user->createToken('Auth Token')->accessToken,
+            'user'=>$user
+        );
+
+        return $this->success("OTP validation successful", $token);
     }
 
     public function validateOtp(Request $request)

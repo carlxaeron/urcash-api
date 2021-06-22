@@ -88,6 +88,44 @@ class PriceRepository implements PriceInterface
         }
     }
 
+    public function updatePriceV1(Request $request, $id)
+    {
+        try {
+            $user = Auth::user();
+            $price = Price::find($id);
+
+            if (!$user) {
+                return $this->error("You are not authenticated", 401);
+            } elseif (!$price) {
+                return $this->error("Price not found", 404);
+            }
+
+            $inputs = [
+                'product_id' => $request->product_id,
+                'price' => $request->price
+            ];
+            $rules = [
+                'product_id' => 'nullable|exists:products,id',
+                'price' => 'nullable|numeric|min:0'
+            ];
+            $validation = Validator::make($inputs, $rules);
+
+            if ($validation->fails()) return $this->error($validation->errors()->all());
+
+            if ($request->has('product_id')) {
+                $price->product_id = $request->product_id;
+            } elseif ($request->has('price')) {
+                $price->price = $request->price;
+            }
+            $price->save();
+
+            return $this->success("Price updated", $price);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
     public function deletePrice($id)
     {
         DB::beginTransaction();
@@ -133,6 +171,32 @@ class PriceRepository implements PriceInterface
         } catch (\Exception $e) {
             DB::rollBack();
             return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+    public function createPriceV1(Request $request)
+    {
+        try {
+            $inputs = [
+                'product_id' => $request->product_id,
+                'price' => $request->price
+            ];
+            $rules = [
+                'product_id' => 'required|exists:products,id',
+                'price' => 'required|numeric|min:0'
+            ];
+            $validation = Validator::make($inputs, $rules);
+
+            if ($validation->fails()) return $this->error($validation->errors()->all());
+
+            $price = Price::create([
+                'product_id' => $request->product_id,
+                'price' => $request->price
+            ]);
+
+            return $this->success("Price created", $price);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $this->error($e->getMessage(), 500);
         }
     }
 }

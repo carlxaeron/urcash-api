@@ -14,6 +14,8 @@ interface ProductInterface
      */
     public function getAllProducts();
 
+    public function getAllProductsV1();
+
     /**
      * Get product by ID
      *
@@ -91,6 +93,7 @@ interface ProductInterface
      * @access  public
      */
     public function updateProduct(Request $request, $id);
+    public function updateProductV1(Request $request, $id);
 
     /**
      * Delete product
@@ -100,6 +103,7 @@ interface ProductInterface
      * @access  public
      */
     public function deleteProduct($id);
+    public function deleteProductV1($id);
 
     /**
      * Create product
@@ -109,4 +113,6 @@ interface ProductInterface
      * @access  public
      */
     public function createProduct(Request $request);
+
+    public function createProductV1(Request $request);
 }

@@ -93,6 +93,8 @@ interface UserInterface
      */
     public function registerUser(Request $request);
 
+    public function registerUserV1(Request $request);
+
     /**
      * Update user
      *
@@ -150,6 +152,8 @@ interface UserInterface
      * @access  public
      */
     public function validateOtp(Request $request);
+    
+    public function validateOtpV1(Request $request);
 
     /**
      * reset Password

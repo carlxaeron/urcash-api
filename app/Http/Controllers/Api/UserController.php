@@ -97,6 +97,11 @@ class UserController extends Controller
         return $this->userInterface->registerUser($request);
     }
 
+    public function registerV1(Request $request)
+    {
+        return $this->userInterface->registerUserV1($request);
+    }
+
     /**
      * Update user
      *
@@ -139,6 +144,11 @@ class UserController extends Controller
     public function validateOtp(Request $request)
     {
         return $this->userInterface->validateOtp($request);
+    }
+
+    public function validateOtpV1(Request $request)
+    {
+        return $this->userInterface->validateOtpV1($request);
     }
 
     /**

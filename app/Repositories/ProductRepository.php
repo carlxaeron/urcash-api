@@ -14,6 +14,7 @@ use App\Mail\CheckoutProducts;
 use App\Repositories\PriceRepository;
 use App\Traits\ResponseAPI;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
@@ -27,6 +28,21 @@ class ProductRepository implements ProductInterface
     {
         try {
             $products = Product::all();
+
+            if ($products->count() < 1) {
+                return $this->error("Products not found", 404);
+            }
+
+            return $this->success("All Products", $products);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function getAllProductsV1()
+    {
+        try {
+            $products = Product::verified()->get();
 
             if ($products->count() < 1) {
                 return $this->error("Products not found", 404);
@@ -348,6 +364,58 @@ class ProductRepository implements ProductInterface
             return $this->error($e->getMessage(), $e->getCode());
         }
     }
+    public function updateProductV1(Request $request, $id)
+    {
+        try {
+            $user = Auth::user();
+            $product = Product::where('id',$id)->where('user_id',$user->id)->first();
+
+            if (!$product) return $this->error("Product not found", 404);
+
+            $inputs = [
+                'price' => $request->price,
+                'name' => $request->name,
+            ];
+            $rules = [
+                'price' => 'required|numeric|min:0',
+                'name' => 'required',
+            ];
+            $validation = Validator::make($inputs, $rules);
+
+            if ($validation->fails()) return $this->error($validation->errors()->all());
+
+            $get_price = Price::where('product_id', '=', $product->id)->first();
+
+            if ($request->has('price')) {
+                $price_repository = new PriceRepository();
+                $get_price = $price_repository->updatePriceV1($request, $get_price->id)->getData()->results;
+            }
+            if ($request->has('sku')) {
+                $product->sku = $request->sku;
+            }
+            if ($request->has('ean')) {
+                $product->ean = $request->ean;
+            }
+            if ($request->has('name')) {
+                $product->name = $request->name;
+            }
+            if ($request->has('manufacturer_name')) {
+                $product->manufacturer_name = $request->manufacturer_name;
+            }
+            if ($request->has('variant')) {
+                $product->variant = $request->variant;
+            }
+            $product->save();
+
+            return $this->success("Product updated", array(
+                "product" => $product,
+                "price" => $get_price->price
+            ));
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
 
     public function deleteProduct($id)
     {
@@ -364,6 +432,89 @@ class ProductRepository implements ProductInterface
         } catch (\Exception $e) {
             DB::rollBack();
             return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+    public function deleteProductV1($id)
+    {
+        DB::beginTransaction();
+        try {
+            $user = Auth::user();
+            $product = Product::where('id',$id)->where('user_id',$user->id)->first();
+
+            if (!$product) return $this->error("Product not found", 404);
+
+            app(PriceRepository::class)->deletePrice($id);
+
+            $product->delete();
+
+            DB::commit();
+            return $this->success("Product deleted", $product);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function createProductV1(Request $request)
+    {
+        try {
+            $inputs = [
+                'price' => $request->price,
+                'name' => $request->name,
+            ];
+            $rules = [
+                'price' => 'required|numeric|min:0',
+                'name' => 'required',
+            ];
+            $validation = Validator::make($inputs, $rules);
+
+            if ($validation->fails()) return $this->error($validation->errors()->all());
+
+            $user = Auth::user();
+
+            // @todo: Verifiy product
+            $inputs['is_verified'] = true;
+            $inputs['user_id'] = $user->id;
+
+            $product = Product::create($inputs);
+
+            if ($product) {
+                $price_repository = new PriceRepository();
+                $request->product_id = $product->id;
+                $price_repository->createPriceV1($request);
+            }
+            //     $product = Product::create([
+            //         'sku' => $request->sku,
+            //         'name' => $request->name,
+            //         // 'variant' => $request->variant,
+            //         'is_verified' => False,
+            //     ]);
+            //     $user = Auth::user();
+            //     $request->product_id = $product->id;
+            //     $price_repository = new PriceRepository();
+            //     $price_repository->createPrice($request);
+
+            //     $request->type = 'product_verification';
+            //     $request->user_id = $user->id;
+            //     $verification_request_repository = new VerificationRequestRepository();
+            //     $verification_request = $verification_request_repository->createVerificationRequest($request);
+
+            //     if ($verification_request->getData()->statusCode == 500) {
+            //         return $this->error($verification_request->getData()->message);
+            //     }
+
+            //     return $this->success("Product created", array(
+            //         "product" => $product,
+            //         "verification_request" => $verification_request->getData()->results
+            //     ));
+            // }
+            return $this->success("Product created", array(
+                "product" => $product,
+                // "verification_request" => $verification_request->getData()->results
+            ));
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $this->error($e->getMessage(), 500);
         }
     }
 

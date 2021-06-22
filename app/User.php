@@ -10,6 +10,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Hash;
 
 class User extends Authenticatable implements CanResetPasswordContract
 {
@@ -76,6 +77,10 @@ class User extends Authenticatable implements CanResetPasswordContract
 
     public function setEmailAttribute ($value) {
         $this->attributes['email'] = strtolower($value);
+    }
+
+    public function setPasswordAttribute ($value) {
+        $this->attributes['password'] = Hash::make($value);
     }
 
     /**

@@ -13,6 +13,17 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Image;
 
+
+class Helper
+{
+    public function generateCode($data = []) {
+        $digits = $data['num'] ?? 4;
+        $otp = rand(pow(10, $digits-1), pow(10, $digits)-1);
+
+        return $otp;
+    }
+}
+
 /**
  * Class RandomStringGenerator
  * @package Utils
