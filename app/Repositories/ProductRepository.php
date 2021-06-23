@@ -11,6 +11,7 @@ use App\User;
 use App\VerificationRequest;
 use App\Interfaces\ProductInterface;
 use App\Mail\CheckoutProducts;
+use App\ProductImage;
 use App\Repositories\PriceRepository;
 use App\Traits\ResponseAPI;
 use Illuminate\Http\Request;
@@ -461,12 +462,18 @@ class ProductRepository implements ProductInterface
             $inputs = [
                 'price' => $request->price,
                 'name' => $request->name,
+                'image' =>  $request->image,
+                'description' =>  $request->description,
             ];
             $rules = [
                 'price' => 'required|numeric|min:0',
                 'name' => 'required',
+                'image' => 'required|max:5|array',
+                'description' => 'required',
             ];
-            $validation = Validator::make($inputs, $rules);
+            $validation = Validator::make($inputs, $rules, [
+                'image.max' => 'Maximum upload file reached.'
+            ]);
 
             if ($validation->fails()) return $this->error($validation->errors()->all());
 
@@ -482,7 +489,14 @@ class ProductRepository implements ProductInterface
                 $price_repository = new PriceRepository();
                 $request->product_id = $product->id;
                 $price_repository->createPriceV1($request);
+
+                foreach($request->image as $img) {
+                    ProductImage::create(['filename'=>$img->store('image'),'product_id'=>$product->id]);
+                }
+
+                $product = $product->find($product->id);
             }
+
             //     $product = Product::create([
             //         'sku' => $request->sku,
             //         'name' => $request->name,
