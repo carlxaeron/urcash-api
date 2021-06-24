@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>B2B INVOICE</title>
+    <title>{{ config('app.name') }} INVOICE</title>
 
     <style>
     .invoice-box {
