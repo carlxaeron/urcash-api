@@ -7,9 +7,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ProductImage extends Model
 {
-    use SoftDeletes;
-
     protected $guarded = [];
+
+    protected $hidden = ['product_id', 'deleted_at', 'created_at'];
 
     public function getFilenameAttribute() {
         return asset($this->attributes['filename']);

@@ -1,7 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
+use App\Interfaces\ProductImageInterface;
 use App\ProductImage;
 use Illuminate\Http\Request;
 
@@ -65,8 +67,8 @@ class ProductImageController extends Controller
      * @param  \App\ProductImage  $productImage
      * @return \Illuminate\Http\Response
      */
-    public function destroy(ProductImage $productImage)
+    public function destroy(Request $request)
     {
-        //
+        return $this->productImageInterface->delete($request->id);
     }
 }
