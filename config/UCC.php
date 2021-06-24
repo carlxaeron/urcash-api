@@ -1,4 +1,4 @@
 <?php
 return [
-    'type'=>app('APP_UCC_TYPE', null)
-]
+    'type'=>env('APP_UCC_TYPE', null)
+];

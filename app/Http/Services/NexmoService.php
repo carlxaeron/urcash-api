@@ -17,7 +17,7 @@ class SendService
         //generate otp
         $otp = rand(pow(10, $digits-1), pow(10, $digits)-1);
 
-        $MESSAGE = $otp.' This is your B2B OTP valid for the next 5 minutes.';
+        $MESSAGE = $otp.' This is your '.config('app.name').' OTP valid for the next 5 minutes.';
 
         // if(config('app.env') == 'local') {
         //     $user = User::where('mobile_number', $mobileNumber)->first();
@@ -31,7 +31,7 @@ class SendService
     
             $client->message()->send([
                 'to' => $mobileNumber,
-                'from' => 'B2B',
+                'from' => config('app.name'),
                 'text' => $MESSAGE
             ]);
         // }

@@ -376,10 +376,14 @@ class ProductRepository implements ProductInterface
             $inputs = [
                 'price' => $request->price,
                 'name' => $request->name,
+                // 'image' =>  $request->image,
+                // 'description' =>  $request->description,
             ];
             $rules = [
                 'price' => 'required|numeric|min:0',
                 'name' => 'required',
+                // 'image' => 'required|max:5|array',
+                // 'description' => 'required',
             ];
             $validation = Validator::make($inputs, $rules);
 
