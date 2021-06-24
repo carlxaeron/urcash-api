@@ -22,7 +22,7 @@ class EmailVerifiedSuccessfully extends Mailable
      */
     public function __construct($user) {
         $this->user = $user;
-        $this->subject = "B2B - You have successfully verified your email!";
+        $this->subject = config('app.name')." - You have successfully verified your email!";
     }
 
     /**

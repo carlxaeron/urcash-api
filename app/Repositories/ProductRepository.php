@@ -376,10 +376,14 @@ class ProductRepository implements ProductInterface
             $inputs = [
                 'price' => $request->price,
                 'name' => $request->name,
+                // 'image' =>  $request->image,
+                // 'description' =>  $request->description,
             ];
             $rules = [
                 'price' => 'required|numeric|min:0',
                 'name' => 'required',
+                // 'image' => 'required|max:5|array',
+                // 'description' => 'required',
             ];
             $validation = Validator::make($inputs, $rules);
 
@@ -440,11 +444,15 @@ class ProductRepository implements ProductInterface
         DB::beginTransaction();
         try {
             $user = Auth::user();
+
             $product = Product::where('id',$id)->where('user_id',$user->id)->first();
 
             if (!$product) return $this->error("Product not found", 404);
 
             app(PriceRepository::class)->deletePrice($id);
+
+            $pimg = app(ProductImageRepository::class)->deleteByProduct($product);
+            if($pimg) return $pimg;
 
             $product->delete();
 

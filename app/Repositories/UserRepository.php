@@ -374,6 +374,9 @@ class UserRepository implements UserInterface
                 // Create User
                 $user = User::create($inputs);
 
+                // Role
+                UsersRole::create(['user_id'=>$user->id,'role_id'=>Role::where('slug','merchant')->first()->id]);
+
                 $token = array(
                     'token' => $user->createToken('Auth Token')->accessToken,
                     'user'=>$user
@@ -381,10 +384,16 @@ class UserRepository implements UserInterface
 
                 DB::commit();
 
+                // Refresh relationships
+                $user = $user->find($user->id);
+
                 return $this->success("Successfully created!", $token);
             } else {
                 // Create User
                 $user = User::create($inputs);
+
+                // Role
+                UsersRole::create(['user_id'=>$user->id,'role_id'=>Role::where('slug','merchant')->first()->id]);
     
                 $otp = app(Helper::class)->generateCode();
                 $user->otp = $otp;
@@ -394,6 +403,9 @@ class UserRepository implements UserInterface
                 Mail::to($user)->send(new VerifyEmail($user, $otp));
                 
                 DB::commit();
+
+                // Refresh relationships
+                $user = $user->find($user->id);
             }
             return $this->success("Successfully created!", $user);
         } catch (Exception $e) {

@@ -24,7 +24,7 @@ class ResendVerificationCode extends Mailable
     public function __construct($user, $code) {
         $this->user = $user;
         $this->code = $code;
-        $this->subject = "B2B - Resend Verification Code";
+        $this->subject = config('app.name')." - Resend Verification Code";
     }
 
     /**

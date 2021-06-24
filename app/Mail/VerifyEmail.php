@@ -24,7 +24,7 @@ class VerifyEmail extends Mailable
     public function __construct($user, $code) {
         $this->user = $user;
         $this->code = $code;
-        $this->subject = "B2B - Confirm your registration";
+        $this->subject = config('app.name')." - Confirm your registration";
     }
 
     /**

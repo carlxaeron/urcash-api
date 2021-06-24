@@ -9,7 +9,7 @@
     <h3>Hello {{ $first_name }} {{ $last_name }},</h3>
     <div class="offset-md-1 col-md-10 text-center">
 
-    <p>Greetings from B2B digital wallet!</p>
+    <p>Greetings from {{ config('app.name') }} digital wallet!</p>
 
     <p>Please be informed that your cashout request was approved and transfer to your account {{ $payment_method }}</p>
 
@@ -24,7 +24,7 @@
             <li>Fee: {{ $fee }}</li>
             <li>Currency: PHP</li>
         </ul>
-        <p>We, at B2B thank you for your continued patronage!</p>
+        <p>We, at {{ config('app.name') }} thank you for your continued patronage!</p>
 
     </div>
 @endsection

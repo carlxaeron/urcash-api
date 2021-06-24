@@ -32,7 +32,7 @@ class User extends Authenticatable implements CanResetPasswordContract
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token', 'otp'
+        'password', 'remember_token', 'otp', 'otp_expiration', 'otp_created_at', 'email_verified_at'
     ];
 
     /**
@@ -43,6 +43,10 @@ class User extends Authenticatable implements CanResetPasswordContract
     protected $casts = [
         'birthdate' => 'date',
         'email_verified_at' => 'datetime',
+    ];
+
+    protected $with = [
+        'roles'
     ];
 
     /**
@@ -93,5 +97,9 @@ class User extends Authenticatable implements CanResetPasswordContract
 
     public function ticketPurchase () {
         return $this->hasMany('App\TicketPurchase');
+    }
+
+    public function roles () {
+        return $this->hasMany('App\UsersRole','user_id','id');
     }
 }
