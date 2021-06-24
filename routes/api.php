@@ -336,9 +336,14 @@ Route::prefix('/v1')->group(function () {
     
     // Requires TOKEN
     Route::middleware('auth:api')->group(function () {
+
+        // Product
         Route::put('/product/{id}', 'Api\ProductController@updateV1');
         Route::delete('/product/{id}', 'Api\ProductController@deleteV1');
         Route::post('/product', 'Api\ProductController@createV1');
+        
+        // Product Image
+        Route::delete('/product/image/{id}', 'Api\ProductImageController@destroy');
 
         // // Admin Role
         // Route::middleware(['role:administrator'])->group(function () {

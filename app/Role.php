@@ -11,6 +11,10 @@ class Role extends Model
         'name', 'slug',
     ];
 
+    protected $visible = [
+        'name'
+    ];
+
     /**
      * Serialize timestamps as datetime strings without the timezone.
      */
