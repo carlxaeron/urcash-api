@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Product extends Model
 {
     protected $fillable = [
-        'shop_id', 'sku', 'ean', 'name', 'manufacturer_name', 'variant', 'is_verified','user_id',
+        'shop_id', 'sku', 'ean', 'name', 'manufacturer_name', 'variant', 'is_verified','user_id','description'
     ];
 
     protected $hidden = [
@@ -17,11 +17,14 @@ class Product extends Model
     ];
 
     protected $with = [
-        'prices'
+        'prices','images'
     ];
 
     public function prices() {
         return $this->hasOne(Price::class,'id');
+    }
+    public function images() {
+        return $this->hasMany(ProductImage::class,'product_id','id');
     }
 
     public function scopeVerified($query) {

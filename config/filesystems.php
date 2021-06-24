@@ -80,6 +80,7 @@ return [
 
     'links' => [
         public_path('storage') => storage_path('app/public'),
+        public_path('image') => storage_path('app/image'),
         public_path('receipt') => storage_path('app/voucher order proof receipt'),
     ],
 
