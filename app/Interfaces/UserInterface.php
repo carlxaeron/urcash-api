@@ -135,6 +135,8 @@ interface UserInterface
      */
     public function getUserByMobileNumber($mobile_number);
 
+    public function getUserInfo();
+
     /**
      * Update OTP and send
      *

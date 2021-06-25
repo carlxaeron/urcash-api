@@ -11,6 +11,7 @@ use App\VoucherAccount;
 use App\Http\Helper\Utils\GenerateRandomIntegers;
 use App\Http\Helper\Utils\Helper;
 use App\Http\Helper\Utils\UploadImage;
+use App\Http\Resources\User as ResourcesUser;
 use App\Http\Services\NexmoService\SendService;
 use App\Http\Services\RedService;
 use App\Interfaces\UserInterface;
@@ -107,14 +108,14 @@ class UserRepository implements UserInterface
             $validation = Validator::make($inputs, $rules);
 
             if ($validation->fails()) return $this->error($validation->errors()->all());
-            $user = User::where('email', $request->email)->first();
+            $user = User::where('email', $request->email)->with(['userRoles.role'])->first();
 
             if(!$user) return $this->error('Email is not yet registered.');
             else {
                 if (!$user->is_locked) {
                     $token = array(
                         'token' => $user->createToken('Auth Token')->accessToken,
-                        'user'=>$user
+                        'user'=>new ResourcesUser($user)
                     );
 
                     return $this->success("Login success", $token);
@@ -385,7 +386,7 @@ class UserRepository implements UserInterface
                 DB::commit();
 
                 // Refresh relationships
-                $user = $user->find($user->id);
+                $user = $user->with(['userRoles.role'])->find($user->id);
 
                 return $this->success("Successfully created!", $token);
             } else {
@@ -405,9 +406,9 @@ class UserRepository implements UserInterface
                 DB::commit();
 
                 // Refresh relationships
-                $user = $user->find($user->id);
+                $user = $user->with(['userRoles.role'])->find($user->id);
             }
-            return $this->success("Successfully created!", $user);
+            return $this->success("Successfully created!", new ResourcesUser($user));
         } catch (Exception $e) {
             DB::rollback();
             return $this->error($e->getMessage(), (int) $e->getCode());
@@ -631,6 +632,15 @@ class UserRepository implements UserInterface
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
+    }
+
+    public function getUserInfo()
+    {
+        $user = User::with(['userRoles.role'])->find(Auth::user()->id);
+
+        if (!$user) return $this->error("User not found");
+
+        return $this->success("User information", new ResourcesUser($user));
     }
 
     public function updateOtpAndSend($mobile_number)
