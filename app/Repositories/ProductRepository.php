@@ -55,6 +55,21 @@ class ProductRepository implements ProductInterface
         }
     }
 
+    public function getUserProducts()
+    {
+        try {
+            $products = Product::verified()->where('user_id',Auth::user()->id)->get();
+
+            if ($products->count() < 1) {
+                return $this->error("Products not found", 404);
+            }
+
+            return $this->success("All Products", $products);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
     public function getProductById($id)
     {
         try {

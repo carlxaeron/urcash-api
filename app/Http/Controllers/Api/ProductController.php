@@ -27,6 +27,10 @@ class ProductController extends Controller
         return $this->productInterface->getAllProductsV1();
     }
 
+    public function myProducts() {
+        return $this->productInterface->getUserProducts();
+    }
+
     /**
      * Get product by ID
      */
