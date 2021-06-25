@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Category;
+use App\Http\Resources\Product as ResourcesProduct;
 use App\Price;
 use App\Product;
 use App\Purchase;
@@ -45,13 +46,16 @@ class ProductRepository implements ProductInterface
     public function getAllProductsV1()
     {
         try {
-            $products = Product::verified()->get();
+            $products = Product::verified();
 
             if ($products->count() < 1) {
                 return $this->error("Products not found", 404);
             }
 
-            return $this->success("All Products", $products);
+            if(request()->page) $products = $products->paginate(request()->per_page ?? 10);
+            else $products = $products->get();
+
+            return $this->success("All Products", new ResourcesProduct($products));
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
@@ -60,13 +64,16 @@ class ProductRepository implements ProductInterface
     public function getUserProducts()
     {
         try {
-            $products = Product::verified()->where('user_id',Auth::user()->id)->get();
+            $products = Product::verified()->where('user_id',Auth::user()->id);
 
             if ($products->count() < 1) {
                 return $this->error("Products not found", 404);
             }
 
-            return $this->success("All Products", $products);
+            if(request()->page) $products = $products->paginate(request()->per_page ?? 10);
+            else $products = $products->get();
+
+            return $this->success("All Products", new ResourcesProduct($products));
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
