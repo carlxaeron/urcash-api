@@ -323,6 +323,7 @@ Route::prefix('/v1')->group(function () {
     Route::post('login', [App\Http\Controllers\Api\UserController::class, 'loginV1']);
     Route::post('login-with-red', [App\Http\Controllers\Api\UserController::class, 'loginV1WithRed']);
 
+ 
     Route::post('validate-otp', 'Api\UserController@validateOtpV1');
 
     // Register
@@ -341,16 +342,19 @@ Route::prefix('/v1')->group(function () {
         Route::put('/product/{id}', 'Api\ProductController@updateV1');
         Route::delete('/product/{id}', 'Api\ProductController@deleteV1');
         Route::post('/product', 'Api\ProductController@createV1');
+        Route::get('/product/{id}', 'Api\ProductController@show');
+ 
         
         // Product Image
         Route::delete('/product/image/{id}', 'Api\ProductImageController@destroy');
+ 
 
         // // Admin Role
         // Route::middleware(['role:administrator'])->group(function () {
             // Categories
-            Route::post('category', [App\Http\Controllers\Api\CategoryController::class, 'store']);
+            Route::post('category', [App\Http\Controllers\Api\CategoryController::class, 'store']); 
             Route::put('category/{id}', [App\Http\Controllers\Api\CategoryController::class, 'update']);
             Route::delete('category/{id}', [App\Http\Controllers\Api\CategoryController::class, 'destroy']);
-        // });
+        // }); 
     });
 });
