@@ -108,14 +108,14 @@ class UserRepository implements UserInterface
             $validation = Validator::make($inputs, $rules);
 
             if ($validation->fails()) return $this->error($validation->errors()->all());
-            $user = User::where('email', $request->email)->first();
+            $user = User::where('email', $request->email)->with(['userRoles.role'])->first();
 
             if(!$user) return $this->error('Email is not yet registered.');
             else {
                 if (!$user->is_locked) {
                     $token = array(
                         'token' => $user->createToken('Auth Token')->accessToken,
-                        'user'=>$user
+                        'user'=>new ResourcesUser($user)
                     );
 
                     return $this->success("Login success", $token);
@@ -386,7 +386,7 @@ class UserRepository implements UserInterface
                 DB::commit();
 
                 // Refresh relationships
-                $user = $user->find($user->id);
+                $user = $user->with(['userRoles.role'])->find($user->id);
 
                 return $this->success("Successfully created!", $token);
             } else {
@@ -406,7 +406,7 @@ class UserRepository implements UserInterface
                 DB::commit();
 
                 // Refresh relationships
-                $user = $user->find($user->id);
+                $user = $user->with(['userRoles.role'])->find($user->id);
             }
             return $this->success("Successfully created!", new ResourcesUser($user));
         } catch (Exception $e) {
@@ -636,7 +636,7 @@ class UserRepository implements UserInterface
 
     public function getUserInfo()
     {
-        $user = User::find(Auth::user()->id);
+        $user = User::with(['userRoles.role'])->find(Auth::user()->id);
 
         if (!$user) return $this->error("User not found");
 

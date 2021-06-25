@@ -158,6 +158,39 @@ class ProductRepository implements ProductInterface
         }
     }
 
+    public function checkoutProductsV1(Request $request)
+    {
+        $inputs = [
+            'products' => $request->products,
+        ];
+        $rules = [
+            'products' => 'required',
+            'products.*.quantity' => 'required|integer',
+            'products.*.product_id' => 'required|exists:products,id',
+        ];
+        $validation = Validator::make($inputs, $rules);
+
+        if ($validation->fails()) return $this->error($validation->errors()->all());
+        $user = Auth::user();
+        foreach($request->products as $prod) {
+            $product = Product::find($prod['product_id']);
+            $purchase = PurchaseItem::create([
+                'product_id'=>$product->id,
+                'quantity'=>$prod['quantity'],
+                'user_id'=>$user->id,
+                'price'=>$product->prices->price,
+            ]);
+        }
+
+        // Mail::to($user)->send(new CheckoutProducts($user, $purchase));
+
+        return $this->success("Transaction complete", array(
+            "products_purchased" => $request->products,
+            "subtotal" => 123,
+            "transaction" => $purchase,
+        ));
+    }
+
     public function checkoutProducts(Request $request)
     {
         try {

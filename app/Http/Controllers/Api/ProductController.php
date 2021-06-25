@@ -67,6 +67,13 @@ class ProductController extends Controller
     }
 
     /**
+     * Checkout products
+     */
+    public function checkoutProductsV1(Request $request) {
+        return $this->productInterface->checkoutProductsV1($request);
+    }
+
+    /**
      * Search products based on query
      */
     public function searchProducts(Request $request) {

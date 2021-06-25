@@ -60,6 +60,8 @@ interface ProductInterface
      */
     public function checkoutProducts(Request $request);
 
+    public function checkoutProductsV1(Request $request);
+
     /**
      * Search products based on query
      *

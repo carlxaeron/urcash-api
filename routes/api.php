@@ -323,7 +323,7 @@ Route::prefix('/v1')->group(function () {
     Route::post('login', [App\Http\Controllers\Api\UserController::class, 'loginV1']);
     Route::post('login-with-red', [App\Http\Controllers\Api\UserController::class, 'loginV1WithRed']);
 
- 
+    // Validate OTP on email
     Route::post('validate-otp', 'Api\UserController@validateOtpV1');
 
     // Register
@@ -349,10 +349,10 @@ Route::prefix('/v1')->group(function () {
         Route::post('/product', 'Api\ProductController@createV1');
         Route::get('/product/{id}', 'Api\ProductController@show');
  
+        Route::post('/checkout', [App\Http\Controllers\Api\ProductController::class, 'checkoutProductsV1']);
         
         // Product Image
         Route::delete('/product/image/{id}', 'Api\ProductImageController@destroy');
- 
 
         // // Admin Role
         // Route::middleware(['role:administrator'])->group(function () {

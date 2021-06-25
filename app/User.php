@@ -46,7 +46,7 @@ class User extends Authenticatable implements CanResetPasswordContract
     ];
 
     protected $with = [
-        'roles'
+        // 'roles'
     ];
 
     /**
@@ -99,7 +99,7 @@ class User extends Authenticatable implements CanResetPasswordContract
         return $this->hasMany('App\TicketPurchase');
     }
 
-    public function roles () {
+    public function userRoles () {
         return $this->hasMany('App\UsersRole','user_id','id');
     }
 }

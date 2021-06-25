@@ -15,7 +15,10 @@ class User extends JsonResource
     public function toArray($request)
     {
         $data = parent::toArray($request);
-        $data['roles'] = collect($data['roles'])->map(function($v){ return $v['role']; });
+        if(isset($data['user_roles'])) {
+            $data['roles'] = collect($data['user_roles'])->map(function($v){ return $v['role']; });
+            unset($data['user_roles']);
+        }
 
         return $data;
     }
