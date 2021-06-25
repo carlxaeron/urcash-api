@@ -17,7 +17,7 @@ class Product extends Model
     ];
 
     protected $with = [
-        'prices','images'
+        'prices','images','categories'
     ];
 
     public function prices() {
@@ -25,6 +25,9 @@ class Product extends Model
     }
     public function images() {
         return $this->hasMany(ProductImage::class,'product_id','id');
+    }
+    public function categories() {
+        return $this->hasMany(ProductCategory::class,'product_id','id');
     }
 
     public function scopeVerified($query) {

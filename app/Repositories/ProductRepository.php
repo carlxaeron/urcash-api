@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Category;
 use App\Price;
 use App\Product;
 use App\Purchase;
@@ -11,6 +12,7 @@ use App\User;
 use App\VerificationRequest;
 use App\Interfaces\ProductInterface;
 use App\Mail\CheckoutProducts;
+use App\ProductCategory;
 use App\ProductImage;
 use App\Repositories\PriceRepository;
 use App\Traits\ResponseAPI;
@@ -487,12 +489,18 @@ class ProductRepository implements ProductInterface
                 'name' => $request->name,
                 'image' =>  $request->image,
                 'description' =>  $request->description,
+                'categories' =>  $request->categories,
             ];
             $rules = [
                 'price' => 'required|numeric|min:0',
                 'name' => 'required',
                 'image' => 'required|max:5|array',
                 'description' => 'required',
+                'categories' => ['required','array', function($attr, $value, $fail){
+                    foreach($value as $v) {
+                        if(!Category::find($v)) $fail("The category ID #$v does not exist.");
+                    }
+                }],
             ];
             $validation = Validator::make($inputs, $rules, [
                 'image.max' => 'Maximum upload file reached.'
@@ -517,7 +525,11 @@ class ProductRepository implements ProductInterface
                     ProductImage::create(['filename'=>$img->store('image'),'product_id'=>$product->id]);
                 }
 
-                $product = $product->find($product->id);
+                foreach($request->categories as $cat) {
+                    ProductCategory::create(['product_id'=>$product->id,'category_id'=>$cat]);
+                }
+
+                $product = $product->with(['categories.category'])->find($product->id);
             }
 
             //     $product = Product::create([
