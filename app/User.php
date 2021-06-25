@@ -32,7 +32,7 @@ class User extends Authenticatable implements CanResetPasswordContract
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token', 'otp', 'otp_expiration', 'otp_created_at', 'email_verified_at'
+        'password', 'remember_token', 'otp', 'otp_expiration', 'otp_created_at', 'email_verified_at', 'created_at', 'updated_at'
     ];
 
     /**

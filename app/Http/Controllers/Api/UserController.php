@@ -172,6 +172,17 @@ class UserController extends Controller
     {
         return $this->userInterface->getUserByMobileNumber($request->mobile_number);
     }
+    
+    /**
+     * Get user details
+     *
+     * @param  \Illuminate\Http\Request ; $request
+     * @return \Illuminate\Http\Response
+     */
+    public function getUserInfo()
+    {
+        return $this->userInterface->getUserInfo();
+    }
 
     /**
      * Login using mpin

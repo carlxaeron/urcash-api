@@ -11,6 +11,7 @@ use App\VoucherAccount;
 use App\Http\Helper\Utils\GenerateRandomIntegers;
 use App\Http\Helper\Utils\Helper;
 use App\Http\Helper\Utils\UploadImage;
+use App\Http\Resources\User as ResourcesUser;
 use App\Http\Services\NexmoService\SendService;
 use App\Http\Services\RedService;
 use App\Interfaces\UserInterface;
@@ -407,7 +408,7 @@ class UserRepository implements UserInterface
                 // Refresh relationships
                 $user = $user->find($user->id);
             }
-            return $this->success("Successfully created!", $user);
+            return $this->success("Successfully created!", new ResourcesUser($user));
         } catch (Exception $e) {
             DB::rollback();
             return $this->error($e->getMessage(), (int) $e->getCode());
@@ -631,6 +632,15 @@ class UserRepository implements UserInterface
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
+    }
+
+    public function getUserInfo()
+    {
+        $user = User::find(Auth::user()->id);
+
+        if (!$user) return $this->error("User not found");
+
+        return $this->success("User information", new ResourcesUser($user));
     }
 
     public function updateOtpAndSend($mobile_number)
