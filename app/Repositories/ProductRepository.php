@@ -179,16 +179,22 @@ class ProductRepository implements ProductInterface
             $batchCode = \Illuminate\Support\Str::uuid();
             foreach($request->products as $prod) {
                 $product = Product::find($prod['product_id']);
-                PurchaseItem::create([
+                $p = PurchaseItem::create([
                     'product_id'=>$product->id,
                     'quantity'=>$prod['quantity'],
                     'user_id'=>$user->id,
                     'price'=>$product->prices->price,
                     'batch_code'=>$batchCode,
                 ]);
+                $p->status = 'processing';
+                $p->purchase_status = 'unpaid';
+                $p->payment_method = 'COD';
+                $p->save();
                 $subtotal += ($product->prices->price * $prod['quantity']);
             }
             $purchase = PurchaseItem::where('batch_code', $batchCode)->get();
+
+            DB::commit();
 
             // Mail::to($user)->send(new CheckoutProducts($user, $purchase));
 

@@ -8,7 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class PurchaseItem extends Model
 {
     protected $fillable = [
-        'purchase_id', 'product_id', 'quantity', 'user_id', 'price', 'batch_code'
+        'purchase_id', 'product_id', 'quantity', 'user_id', 'price', 'batch_code',
+    ];
+
+    protected $appends = [
+        'purchase_step'
     ];
 
     /**
@@ -20,5 +24,31 @@ class PurchaseItem extends Model
 
     public function getUpdatedAtAttribute($date) {
         return Carbon::parse($date)->toDateTimeString();
+    }
+
+    public function getPurchaseStepAttribute() {
+        switch ($this->attributes['status']) {
+            case 'processing':
+                $num = 1;
+                break;
+
+            case 'shipped':
+                $num = 2;
+                break;
+            
+            case 'delivered':
+                $num = 3;
+                break;
+
+            case 'completed':
+                $num = 4;
+                break;
+            
+            default:
+                $num = 0;
+                break;
+        }
+
+        return $num;
     }
 }
