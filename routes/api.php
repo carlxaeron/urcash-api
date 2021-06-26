@@ -347,6 +347,8 @@ Route::prefix('/v1')->group(function () {
         Route::get('/products/me', 'Api\ProductController@myProducts');
         // User -
         Route::get('/user/me', 'Api\UserController@getUserInfo');
+        // User - Purchases
+        Route::get('/order/me', 'Api\UserController@getUserPurchases');
 
         // Product
         Route::put('/product/{id}', 'Api\ProductController@updateV1');
@@ -354,6 +356,7 @@ Route::prefix('/v1')->group(function () {
         Route::post('/product', 'Api\ProductController@createV1');
         Route::get('/product/{id}', 'Api\ProductController@show');
  
+        // Checkout
         Route::post('/checkout', [App\Http\Controllers\Api\ProductController::class, 'checkoutProductsV1']);
         
         // Product Image

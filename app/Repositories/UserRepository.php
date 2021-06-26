@@ -11,12 +11,14 @@ use App\VoucherAccount;
 use App\Http\Helper\Utils\GenerateRandomIntegers;
 use App\Http\Helper\Utils\Helper;
 use App\Http\Helper\Utils\UploadImage;
+use App\Http\Resources\PurchaseItems;
 use App\Http\Resources\User as ResourcesUser;
 use App\Http\Services\NexmoService\SendService;
 use App\Http\Services\RedService;
 use App\Interfaces\UserInterface;
 use App\Mail\HasTooManyLoginAttempts;
 use App\Mail\VerifyEmail;
+use App\PurchaseItem;
 use App\Repositories\ShopRepository;
 use App\Repositories\SupportTicketRepository;
 use App\Traits\ResponseAPI;
@@ -636,11 +638,30 @@ class UserRepository implements UserInterface
 
     public function getUserInfo()
     {
-        $user = User::with(['address','userRoles.role'])->find(Auth::user()->id);
+        try {
+            $user = User::with(['address','userRoles.role'])->find(Auth::user()->id);
+    
+            if (!$user) return $this->error("User not found");
+    
+            return $this->success("User information", new ResourcesUser($user));
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
 
-        if (!$user) return $this->error("User not found");
+    public function getUserPurchases()
+    {
+        try {
+            $user = Auth::user();
 
-        return $this->success("User information", new ResourcesUser($user));
+            $purchases = PurchaseItem::with(['product.categories.category'])->where('user_id', $user->id);
+
+            $purchases = request()->page ? $purchases->paginate(request()->per_page ? request()->per_page : 10) : $purchases->get();
+
+            return $this->success("User purchases", new PurchaseItems($purchases));
+        } catch (Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
     }
 
     public function updateOtpAndSend($mobile_number)

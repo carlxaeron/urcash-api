@@ -185,6 +185,17 @@ class UserController extends Controller
     }
 
     /**
+     * Get user purchases
+     *
+     * @param  \Illuminate\Http\Request ; $request
+     * @return \Illuminate\Http\Response
+     */
+    public function getUserPurchases()
+    {
+        return $this->userInterface->getUserPurchases();
+    }
+
+    /**
      * Login using mpin
      *
      * @param  \Illuminate\Http\Request ; $request
