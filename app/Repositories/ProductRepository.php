@@ -193,12 +193,10 @@ class ProductRepository implements ProductInterface
                 $p->save();
                 $subtotal += ($product->prices->price * $prod['quantity']);
             }
-            $purchase = PurchaseItem::where('batch_code', $batchCode)->get();
+            $purchase = PurchaseItem::with(['product.categories.category'])->where('batch_code', $batchCode)->get();
 
             DB::commit();
 
-            // Mail::to($user)->send(new CheckoutProducts($user, $purchase));
-            // Mail::to($user)->send(new CheckoutProducts(Auth::user(), $purchase));
             $user->notify(new NotificationsCheckoutProducts($user, $purchase));
 
             return $this->success("Transaction complete", array(

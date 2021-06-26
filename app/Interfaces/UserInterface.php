@@ -135,7 +135,19 @@ interface UserInterface
      */
     public function getUserByMobileNumber($mobile_number);
 
+    /**
+     * Get user details
+     *
+     * @access  public
+     */
     public function getUserInfo();
+
+    /**
+     * Get user purchases
+     *
+     * @access  public
+     */
+    public function getUserPurchases();
 
     /**
      * Update OTP and send
