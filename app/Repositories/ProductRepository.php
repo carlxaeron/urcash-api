@@ -13,6 +13,7 @@ use App\User;
 use App\VerificationRequest;
 use App\Interfaces\ProductInterface;
 use App\Mail\CheckoutProducts;
+use App\Notifications\CheckoutProducts as NotificationsCheckoutProducts;
 use App\ProductCategory;
 use App\ProductImage;
 use App\Repositories\PriceRepository;
@@ -197,6 +198,8 @@ class ProductRepository implements ProductInterface
             DB::commit();
 
             // Mail::to($user)->send(new CheckoutProducts($user, $purchase));
+            // Mail::to($user)->send(new CheckoutProducts(Auth::user(), $purchase));
+            $user->notify(new NotificationsCheckoutProducts($user, $purchase));
 
             return $this->success("Transaction complete", array(
                 "products_purchased" => $request->products,
