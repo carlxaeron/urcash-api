@@ -319,6 +319,11 @@ Route::post('/processor/create', 'Api\PayoutProcessorController@create');
 
 // B2B
 Route::prefix('/v1')->group(function () {
+    // // Test
+    // Route::get('mail', function(){
+    //     return (new App\Notifications\CheckoutProducts(User::with('address')->find(1), PurchaseItem::with(['product.owner'])->where('batch_code','9357eb58-6b83-4c2b-ae03-e3653f5dceb4')->get()))->toMail('carlxaeron09@gmail.com');
+    // });
+
     // Login
     Route::post('login', [App\Http\Controllers\Api\UserController::class, 'loginV1']);
     Route::post('login-with-red', [App\Http\Controllers\Api\UserController::class, 'loginV1WithRed']);

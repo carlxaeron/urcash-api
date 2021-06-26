@@ -15,6 +15,14 @@ class PurchaseItem extends Model
         'purchase_step'
     ];
 
+    protected $with = [
+        'product'
+    ];
+
+    public function product() {
+        return $this->belongsTo('App\Product');
+    }
+
     /**
      * Serialize timestamps as datetime strings without the timezone.
      */

@@ -29,6 +29,9 @@ class Product extends Model
     public function categories() {
         return $this->hasMany(ProductCategory::class,'product_id','id');
     }
+    public function owner() {
+        return $this->belongsTo(User::class,'user_id','id');
+    }
 
     public function scopeVerified($query) {
         return $query->where('is_verified',1);

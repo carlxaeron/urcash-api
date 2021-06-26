@@ -636,7 +636,7 @@ class UserRepository implements UserInterface
 
     public function getUserInfo()
     {
-        $user = User::with(['userRoles.role'])->find(Auth::user()->id);
+        $user = User::with(['address','userRoles.role'])->find(Auth::user()->id);
 
         if (!$user) return $this->error("User not found");
 
