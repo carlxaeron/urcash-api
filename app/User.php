@@ -102,4 +102,8 @@ class User extends Authenticatable implements CanResetPasswordContract
     public function userRoles () {
         return $this->hasMany('App\UsersRole','user_id','id');
     }
+
+    public function address () {
+        return $this->hasOne('App\Address','id','address_id');
+    }
 }

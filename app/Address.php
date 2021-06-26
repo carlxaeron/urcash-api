@@ -11,6 +11,10 @@ class Address extends Model
         'id', 'complete_address', 'street', 'barangay', 'city', 'province', 'country',
     ];
 
+    protected $hidden = [
+        'id', 'updated_at', 'created_at'
+    ];
+
     /**
      * Serialize timestamps as datetime strings without the timezone.
      */
@@ -20,6 +24,16 @@ class Address extends Model
 
     public function getUpdatedAtAttribute($date) {
         return Carbon::parse($date)->toDateTimeString();
+    }
+
+    public function getCompleteAddressAttribute() {
+        $address = '';
+        $address .= $this->attributes['street'].', ';
+        $address .= $this->attributes['barangay'].', ';
+        $address .= $this->attributes['city'].', ';
+        $address .= $this->attributes['province'].', ';
+        $address .= $this->attributes['country'];
+        return $address;
     }
 
     /**
