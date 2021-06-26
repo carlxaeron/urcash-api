@@ -17,6 +17,7 @@ use App\ProductCategory;
 use App\ProductImage;
 use App\Repositories\PriceRepository;
 use App\Traits\ResponseAPI;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -160,35 +161,53 @@ class ProductRepository implements ProductInterface
 
     public function checkoutProductsV1(Request $request)
     {
-        $inputs = [
-            'products' => $request->products,
-        ];
-        $rules = [
-            'products' => 'required',
-            'products.*.quantity' => 'required|integer',
-            'products.*.product_id' => 'required|exists:products,id',
-        ];
-        $validation = Validator::make($inputs, $rules);
+        DB::beginTransaction();
+        try {
+            $inputs = [
+                'products' => $request->products,
+            ];
+            $rules = [
+                'products' => 'required',
+                'products.*.quantity' => 'required|integer',
+                'products.*.product_id' => 'required|exists:products,id',
+            ];
+            $validation = Validator::make($inputs, $rules);
 
-        if ($validation->fails()) return $this->error($validation->errors()->all());
-        $user = Auth::user();
-        foreach($request->products as $prod) {
-            $product = Product::find($prod['product_id']);
-            $purchase = PurchaseItem::create([
-                'product_id'=>$product->id,
-                'quantity'=>$prod['quantity'],
-                'user_id'=>$user->id,
-                'price'=>$product->prices->price,
-            ]);
+            if ($validation->fails()) return $this->error($validation->errors()->all());
+            $user = Auth::user();
+            $subtotal = 0;
+            $batchCode = \Illuminate\Support\Str::uuid();
+            foreach($request->products as $prod) {
+                $product = Product::find($prod['product_id']);
+                $p = PurchaseItem::create([
+                    'product_id'=>$product->id,
+                    'quantity'=>$prod['quantity'],
+                    'user_id'=>$user->id,
+                    'price'=>$product->prices->price,
+                    'batch_code'=>$batchCode,
+                ]);
+                $p->status = 'processing';
+                $p->purchase_status = 'unpaid';
+                $p->payment_method = 'COD';
+                $p->save();
+                $subtotal += ($product->prices->price * $prod['quantity']);
+            }
+            $purchase = PurchaseItem::where('batch_code', $batchCode)->get();
+
+            DB::commit();
+
+            // Mail::to($user)->send(new CheckoutProducts($user, $purchase));
+
+            return $this->success("Transaction complete", array(
+                "products_purchased" => $request->products,
+                "subtotal" => $subtotal,
+                "transaction" => $purchase,
+            ));
+        } catch (Exception $e) {
+            DB::rollback();
+            return $this->error($e->getMessage(), $e->getCode());
         }
-
-        // Mail::to($user)->send(new CheckoutProducts($user, $purchase));
-
-        return $this->success("Transaction complete", array(
-            "products_purchased" => $request->products,
-            "subtotal" => 123,
-            "transaction" => $purchase,
-        ));
+        
     }
 
     public function checkoutProducts(Request $request)
