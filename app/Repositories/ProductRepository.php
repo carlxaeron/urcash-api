@@ -172,6 +172,7 @@ class ProductRepository implements ProductInterface
 
         if ($validation->fails()) return $this->error($validation->errors()->all());
         $user = Auth::user();
+        $subtotal = 0;
         foreach($request->products as $prod) {
             $product = Product::find($prod['product_id']);
             $purchase = PurchaseItem::create([
@@ -180,13 +181,14 @@ class ProductRepository implements ProductInterface
                 'user_id'=>$user->id,
                 'price'=>$product->prices->price,
             ]);
+            $subtotal += ($product->prices->price * $prod['quantity']);
         }
 
         // Mail::to($user)->send(new CheckoutProducts($user, $purchase));
 
         return $this->success("Transaction complete", array(
             "products_purchased" => $request->products,
-            "subtotal" => 123,
+            "subtotal" => $subtotal,
             "transaction" => $purchase,
         ));
     }
