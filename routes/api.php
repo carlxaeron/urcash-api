@@ -371,18 +371,21 @@ Route::prefix('/v1')->group(function () {
         // User - Purchases
         Route::get('/order/me', 'Api\UserController@getUserPurchases');
 
-        // Product
-        Route::put('/product/{id}', 'Api\ProductController@updateV1');
-        Route::delete('/product/{id}', 'Api\ProductController@deleteV1');
-        Route::post('/product', 'Api\ProductController@createV1');
- 
         // Checkout
         Route::post('/checkout', [App\Http\Controllers\Api\ProductController::class, 'checkoutProductsV1']);
         
         // Product Image
         Route::delete('/product/image/{id}', 'Api\ProductImageController@destroy');
+        
+        // Admin/Merchant Role
+        Route::middleware(['role:administrator,merchant'])->group(function () {
+            // Product
+            Route::put('/product/{id}', 'Api\ProductController@updateV1');
+            Route::delete('/product/{id}', 'Api\ProductController@deleteV1');
+            Route::post('/product', 'Api\ProductController@createV1');
+        });
 
-        // // Admin Role
+        // Admin Role
         Route::middleware(['role:administrator'])->group(function () {
             // Categories
             Route::post('category', [App\Http\Controllers\Api\CategoryController::class, 'store']); 
