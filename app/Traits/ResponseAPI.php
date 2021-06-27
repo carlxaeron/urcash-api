@@ -25,22 +25,23 @@ trait ResponseAPI
                 return response()->json([
                     'message' => $message,
                     'error' => false,
-                    'statusCode' => $statusCode,
+                    'statusCode' => $statusCode > 0 ? $statusCode : 500,
                     'results' => $data
-                ], $statusCode);
+                ], $statusCode > 0 ? $statusCode : 500);
             } else {
                 return response()->json([
                     'message' => $message,
                     'error' => true,
-                    'statusCode' => $statusCode,
-                ], $statusCode);
+                    'statusCode' => $statusCode > 0 ? $statusCode : 500,
+                ], $statusCode > 0 ? $statusCode : 500);
             }
         } catch (Exception $e) {
+            if(config('API.debug')) dd($e);
             logger($e);
             return response()->json([
                 'message' => $message,
                 'error' => true,
-                'statusCode' => $statusCode,
+                'statusCode' => $statusCode > 0 ? $statusCode : 500,
             ], 500);
         }
     }
