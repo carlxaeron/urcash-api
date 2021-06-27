@@ -170,7 +170,9 @@ class ProductRepository implements ProductInterface
             $rules = [
                 'products' => 'required',
                 'products.*.quantity' => 'required|integer',
-                'products.*.product_id' => 'required|exists:products,id',
+                'products.*.product_id' => ['required', function($attr,$value,$fail) {
+                    if(!Product::find($value)) $fail('Product ID #'.$value.' not exists.');
+                }],
             ];
             $validation = Validator::make($inputs, $rules);
 

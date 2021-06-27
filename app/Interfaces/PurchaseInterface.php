@@ -134,4 +134,6 @@ interface PurchaseInterface
      * @access  public
      */
     public function salesByProvince(Request $request);
+
+    public function updateOrderStatus(Request $request);
 }

@@ -121,4 +121,11 @@ class PurchaseController extends Controller
     public function salesByProvince(Request $request) {
         return $this->purchaseInterface->salesByProvince($request);
     }
+
+    /**
+     * Update order status
+     */
+    public function updateOrderStatus(Request $request) {
+        return $this->purchaseInterface->updateOrderStatus($request);
+    }
 }
