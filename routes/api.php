@@ -324,6 +324,23 @@ Route::prefix('/v1')->group(function () {
     //     return (new App\Notifications\CheckoutProducts(User::with('address')->find(1), PurchaseItem::with(['product.owner'])->where('batch_code','9357eb58-6b83-4c2b-ae03-e3653f5dceb4')->get()))->toMail('carlxaeron09@gmail.com');
     // });
 
+    // Settings
+    Route::get('settings', function(){
+        return response()->json([
+            'message' => 'Fetched Settings',
+            'error' => false,
+            'statusCode' => 200,
+            'results' => [
+                'app_type'=>config('UCC.type'),
+                'orders'=>[
+                    'status'=>config('purchase_statuses.status.v1'),
+                    'purchase_status'=>config('purchase_statuses.purchase_status.v1'),
+                    'payment_method'=>config('purchase_statuses.payment_method.v1'),
+                ]
+            ]
+        ], 200);
+    });
+
     // Login
     Route::post('login', [App\Http\Controllers\Api\UserController::class, 'loginV1']);
     Route::post('login-with-red', [App\Http\Controllers\Api\UserController::class, 'loginV1WithRed']);
