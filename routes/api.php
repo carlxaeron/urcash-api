@@ -383,11 +383,11 @@ Route::prefix('/v1')->group(function () {
         Route::delete('/product/image/{id}', 'Api\ProductImageController@destroy');
 
         // // Admin Role
-        // Route::middleware(['role:administrator'])->group(function () {
+        Route::middleware(['role:administrator'])->group(function () {
             // Categories
             Route::post('category', [App\Http\Controllers\Api\CategoryController::class, 'store']); 
             Route::put('category/{id}', [App\Http\Controllers\Api\CategoryController::class, 'update']);
             Route::delete('category/{id}', [App\Http\Controllers\Api\CategoryController::class, 'destroy']);
-        // }); 
+        }); 
     });
 });
