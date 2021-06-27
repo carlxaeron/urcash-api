@@ -391,6 +391,8 @@ Route::prefix('/v1')->group(function () {
             Route::post('category', [App\Http\Controllers\Api\CategoryController::class, 'store']); 
             Route::put('category/{id}', [App\Http\Controllers\Api\CategoryController::class, 'update']);
             Route::delete('category/{id}', [App\Http\Controllers\Api\CategoryController::class, 'destroy']);
+            // Order
+            Route::put('order','Api\PurchaseController@updateOrderStatus');
         }); 
     });
 });
