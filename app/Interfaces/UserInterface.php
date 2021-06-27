@@ -142,6 +142,8 @@ interface UserInterface
      */
     public function getUserInfo();
 
+    public function updateUserAddress(Request $request);
+
     /**
      * Get user purchases
      *

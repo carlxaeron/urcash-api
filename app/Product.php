@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Product extends Model
 {
     use SoftDeletes;
-    
+
     protected $fillable = [
         'shop_id', 'sku', 'ean', 'name', 'manufacturer_name', 'variant', 'is_verified','user_id','description'
     ];
@@ -17,10 +17,15 @@ class Product extends Model
     protected $hidden = [
         'created_at',
         'updated_at',
+        'deleted_at',
     ];
 
     protected $with = [
-        'prices','images','categories'
+        'prices','images','categories.category'
+    ];
+
+    protected $appends = [
+        'price'
     ];
 
     public function prices() {
@@ -49,5 +54,9 @@ class Product extends Model
 
     public function getUpdatedAtAttribute($date) {
         return Carbon::parse($date)->toDateTimeString();
+    }
+
+    public function getPriceAttribute() {
+        return $this->prices->price;
     }
 }

@@ -184,6 +184,11 @@ class UserController extends Controller
         return $this->userInterface->getUserInfo();
     }
 
+    public function updateUserAddress(Request $request)
+    {
+        return $this->userInterface->updateUserAddress($request);
+    }
+
     /**
      * Get user purchases
      *
