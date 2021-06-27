@@ -337,6 +337,9 @@ Route::prefix('/v1')->group(function () {
     // Products
     Route::get('/products', 'Api\ProductController@indexV1');
 
+    // Product
+    Route::get('/product/{id}', 'Api\ProductController@show');
+
     // Category
     Route::get('category', [App\Http\Controllers\Api\CategoryController::class, 'index']);
     
@@ -354,7 +357,6 @@ Route::prefix('/v1')->group(function () {
         Route::put('/product/{id}', 'Api\ProductController@updateV1');
         Route::delete('/product/{id}', 'Api\ProductController@deleteV1');
         Route::post('/product', 'Api\ProductController@createV1');
-        Route::get('/product/{id}', 'Api\ProductController@show');
  
         // Checkout
         Route::post('/checkout', [App\Http\Controllers\Api\ProductController::class, 'checkoutProductsV1']);
