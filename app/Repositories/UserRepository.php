@@ -376,6 +376,8 @@ class UserRepository implements UserInterface
             if($request->code == 'RED') {
                 // Create User
                 $user = User::create($inputs);
+                $user->status = 1;
+                $user->save();
 
                 // Role
                 UsersRole::create(['user_id'=>$user->id,'role_id'=>Role::where('slug','merchant')->first()->id]);
@@ -646,6 +648,66 @@ class UserRepository implements UserInterface
             return $this->success("User information", new ResourcesUser($user));
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function updateUserAddress(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $inputs = [
+                'street'=>$request->street,
+                'barangay'=>$request->barangay,
+                'city'=>$request->city,
+                'province'=>$request->province,
+                'country'=>$request->country,
+            ];
+            $rules = [
+                'street'=>'required',
+                'barangay'=>'required',
+                'city'=>'required',
+                'province'=>'required',
+                'country'=>'required',
+            ];
+            $validation = Validator::make($inputs, $rules);
+
+            if ($validation->fails()) return $this->error($validation->errors()->all());
+
+            $user = User::find(Auth::user()->id);
+
+            if($user->address_id) {
+                $address = Address::find($user->address_id);
+                if($address) {
+                    $address->street = $request->street;
+                    $address->barangay = $request->barangay;
+                    $address->city = $request->city;
+                    $address->province = $request->province;
+                    $address->country = $request->country;
+                    $address->save();
+                    $msg = "Address Successfully updated!";
+                } else {
+                    $address = Address::create($inputs);
+                    $user_ = User::find($user->id);
+                    $user_->address_id = $address->id;
+                    $user_->save();
+                    $msg = "Address Successfully created!";
+                }
+            } else {
+                $address = Address::create($inputs);
+                $user_ = User::find($user->id);
+                $user_->address_id = $address->id;
+                $user_->save();
+                $msg = "Address Successfully created!";
+            }
+
+            DB::commit();
+
+            $user = User::find($user->id);
+
+            return $this->success($msg, new ResourcesUser($user));
+        } catch (Exception $e) {
+            DB::rollback();
+            return $this->error($e->getMessage(), (int) $e->getCode());
         }
     }
 
