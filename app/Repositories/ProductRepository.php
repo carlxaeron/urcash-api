@@ -48,7 +48,7 @@ class ProductRepository implements ProductInterface
     public function getAllProductsV1()
     {
         try {
-            $products = Product::verified();
+            $products = Product::with('owner')->verified();
 
             if ($products->count() < 1) {
                 return $this->error("Products not found", 404);
@@ -84,7 +84,7 @@ class ProductRepository implements ProductInterface
     public function getProductById($id)
     {
         try {
-            $product = Product::find($id);
+            $product = Product::with('owner')->find($id);
 
             if (!$product) return $this->error("Product not found", 404);
 
