@@ -16,7 +16,7 @@ class PurchaseItem extends Model
     ];
 
     protected $with = [
-        'product'
+        'product', 'user'
     ];
 
     public function product() {
@@ -58,5 +58,10 @@ class PurchaseItem extends Model
         }
 
         return $num;
+    }
+
+    public function user()
+    {
+        return $this->hasOne(User::class, 'id', 'user_id');
     }
 }
