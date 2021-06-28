@@ -46,7 +46,7 @@ class CheckoutProducts extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)->markdown('mail.checkout',['user'=>$this->user,'purchases'=>$this->purchases])
-        ->subject('Checkout Successfull');
+        ->subject('Order Being Processed #'.$this->purchases[0]->batch_code);
     }
 
     /**

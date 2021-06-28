@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Observers\PurchaseItemObserver;
+use App\PurchaseItem;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Schema;
 
@@ -148,5 +150,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         Schema::defaultStringLength(191);
+
+        PurchaseItem::observe(PurchaseItemObserver::class);
     }
 }
