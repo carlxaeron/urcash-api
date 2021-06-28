@@ -60,6 +60,15 @@ class PurchaseItem extends Model
         return $num;
     }
 
+    public function setDataAttribute($value)
+    {
+        $this->attributes['data'] = serialize($value);
+    }
+    public function getDataAttribute($value)
+    {
+        return unserialize($this->attributes['data']);
+    }
+
     public function user()
     {
         return $this->hasOne(User::class, 'id', 'user_id');

@@ -38,6 +38,11 @@ class OrderRepository implements OrderInterface
                 }]
             ];
 
+            if($request->status == 'shipped') {
+                $inputs['tracking_number'] = $request->tracking_number;
+                $rules['tracking_number'] = 'required';
+            }
+
             $validation = Validator::make($inputs, $rules);
 
             if ($validation->fails()) return $this->error($validation->errors()->all());
@@ -46,6 +51,11 @@ class OrderRepository implements OrderInterface
 
             if($request->status) {
                 $order->status = $request->status;
+                if($request->status == 'shipped') {
+                    $data = $order ? $order->data : [];
+                    $data['STATUS_SHIPPED__tracking_number'] = $request->tracking_number;
+                    $order->data = $data;
+                }
             }
 
             $order->save();
