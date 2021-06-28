@@ -134,6 +134,10 @@ class AppServiceProvider extends ServiceProvider
             'App\Interfaces\ProductImageInterface',
             'App\Repositories\ProductImageRepository'
         );
+        $this->app->bind(
+            'App\Interfaces\OrderInterface',
+            'App\Repositories\OrderRepository'
+        );
     }
 
     /**
