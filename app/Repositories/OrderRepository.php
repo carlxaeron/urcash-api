@@ -37,13 +37,24 @@ class OrderRepository implements OrderInterface
                     if(!in_array($value,config('purchase_statuses.status.v1'))) $fail('Status not found!');
                 }]
             ];
-
+            $others = [];
             if($request->status == 'shipped') {
                 $inputs['tracking_number'] = $request->tracking_number;
                 $rules['tracking_number'] = 'required';
+                $inputs['remarks'] = $request->remarks;
+                $rules['remarks'] = function($attr, $value, $fail) {
+                    if(!$value && $value != 'N/A') $fail('The remarks field is required. Type N/A if not available.');
+                };
+            }
+            elseif($request->status == 'cancelled') {
+                $inputs['remarks'] = $request->remarks;
+                $rules['remarks'] = 'required';
+                $rules['remarks'] = function($attr, $value, $fail) {
+                    if(!$value && $value != 'N/A') $fail('The remarks field is required. Type N/A if not available.');
+                };
             }
 
-            $validation = Validator::make($inputs, $rules);
+            $validation = Validator::make($inputs, $rules, $others);
 
             if ($validation->fails()) return $this->error($validation->errors()->all());
 
@@ -52,8 +63,14 @@ class OrderRepository implements OrderInterface
             if($request->status) {
                 $order->status = $request->status;
                 if($request->status == 'shipped') {
-                    $data = $order ? $order->data : [];
+                    $data = $order->data ? $order->data : [];
                     $data['STATUS_SHIPPED__tracking_number'] = $request->tracking_number;
+                    $data['STATUS_SHIPPED__remarks'] = $request->remarks;
+                    $order->data = $data;
+                }
+                elseif($request->status == 'shipped') {
+                    $data = $order->data ? $order->data : [];
+                    $data['STATUS_CANCELLED__remarks'] = $request->remarks;
                     $order->data = $data;
                 }
             }
