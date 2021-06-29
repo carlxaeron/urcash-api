@@ -372,6 +372,9 @@ Route::prefix('/v1')->group(function () {
         // User - Purchases
         Route::get('/order/me', 'Api\UserController@getUserPurchases');
 
+        // Order
+        Route::put('order','Api\OrderController@update');
+
         // Checkout
         Route::post('/checkout', [App\Http\Controllers\Api\ProductController::class, 'checkoutProductsV1']);
         
@@ -388,7 +391,6 @@ Route::prefix('/v1')->group(function () {
             Route::delete('/product/{id}', 'Api\ProductController@deleteV1');
             Route::post('/product', 'Api\ProductController@createV1');
             // Order
-            Route::put('order','Api\OrderController@update');
             Route::get('orders/me','Api\OrderController@getAllUserOrders');
         });
 
