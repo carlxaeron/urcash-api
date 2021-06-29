@@ -28,6 +28,11 @@ class UserController extends Controller
         return $this->userInterface->getAllUsers();
     }
 
+    public function indexV1()
+    {
+        return $this->userInterface->getAllUsersV1();
+    }
+
     /**
      * Login user
      *

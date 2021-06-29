@@ -170,6 +170,19 @@ class UserRepository implements UserInterface
         }
     }
 
+    public function getAllUsersV1()
+    {
+        try {
+            $users = User::with(['roles']);
+            
+            $users = request()->page ? $users->paginate(request()->per_page ? request()->per_page : 10) : $users->get();
+
+            return $this->success("All users", new ResourcesUser($users));
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
     public function getUserById($id)
     {
         try {
