@@ -384,6 +384,7 @@ Route::prefix('/v1')->group(function () {
             Route::delete('/product/{id}', 'Api\ProductController@deleteV1');
             Route::post('/product', 'Api\ProductController@createV1');
             // Order
+            Route::put('order','Api\OrderController@update');
             Route::get('orders/me','Api\OrderController@getAllUserOrders');
         });
 
@@ -394,7 +395,6 @@ Route::prefix('/v1')->group(function () {
             Route::put('category/{id}', [App\Http\Controllers\Api\CategoryController::class, 'update']);
             Route::delete('category/{id}', [App\Http\Controllers\Api\CategoryController::class, 'destroy']);
             // Order
-            Route::put('order','Api\OrderController@update');
             Route::get('orders','Api\OrderController@getAllOrders');
         }); 
     });
