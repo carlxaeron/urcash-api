@@ -371,6 +371,8 @@ Route::prefix('/v1')->group(function () {
         Route::post('/user/me/address', 'Api\UserController@updateUserAddress');
         // User - Purchases
         Route::get('/order/me', 'Api\UserController@getUserPurchases');
+
+        // Order
         Route::put('order','Api\OrderController@update');
 
         // Checkout
