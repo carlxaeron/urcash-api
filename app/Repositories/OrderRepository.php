@@ -3,6 +3,7 @@ namespace App\Repositories;
 
 use App\Http\Resources\PurchaseItems;
 use App\Interfaces\OrderInterface;
+use App\Product;
 use App\PurchaseItem;
 use App\Traits\ResponseAPI;
 use Carbon\Carbon;
@@ -96,11 +97,20 @@ class OrderRepository implements OrderInterface
         }
     }
 
-    public function getAllUserOrders(Request $request)
+    public function getAllMerchantOrders(Request $request)
     {
         try {
-            $orders = PurchaseItem::where('user_id',Auth::user()->id);
-            $orders = $request->page ? $orders->paginate(10) : $orders->get();
+            // $orders = PurchaseItem::where('user_id',Auth::user()->id);
+            // $orders = PurchaseItem::with(['product'=>function($query){
+                //     $query->where('user_id',Auth::user()->id);
+                // }])->where('product_id','!=',null);
+            $orders = PurchaseItem::
+            select('purchase_items.*')
+            ->
+            leftJoin('products as products_table','purchase_items.product_id', 'products_table.id')
+            ->where('products_table.user_id',Auth::user()->id)
+            ;
+            $orders = $request->page ? $orders->paginate($request->per_page ? $request->per_page : 10) : $orders->get();
 
             return $this->success('Successfully retrieved the orders.', new PurchaseItems($orders));
         } catch (\Exception $e) {

@@ -62,7 +62,7 @@ class PurchaseItem extends Model
 
     public function setDataAttribute($value)
     {
-        $this->attributes['data'] = serialize($value);
+        $this->attributes['data'] = serialize($value ?? []);
     }
     public function getDataAttribute($value)
     {
