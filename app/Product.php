@@ -45,6 +45,10 @@ class Product extends Model
         return $query->where('is_verified',1);
     }
 
+    public function scopeRelated($query, $id, $limit) {
+        return $query->inRandomOrder()->limit($limit);
+    }
+
     /**
      * Serialize timestamps as datetime strings without the timezone.
      */

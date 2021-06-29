@@ -80,6 +80,11 @@ class OrderRepository implements OrderInterface
                     $data['STATUS_CANCELLED__date'] = date('Y-m-d H:i:s', strtotime(now()));
                     $order->data = $data;
                 }
+                elseif($request->status == 'delivered') {
+                    $data = $order->data ? $order->data : [];
+                    $data['STATUS_DELIVERED__date'] = date('Y-m-d H:i:s', strtotime(now()));
+                    $order->data = $data;
+                }
                 elseif($request->status == 'completed') {
                     if($order->user_id == $user->id || $order->product->user_id == $user->id) {
                         // do nothing

@@ -23,8 +23,13 @@ class ProductController extends Controller
     public function index() {
         return $this->productInterface->getAllProducts();
     }
+
     public function indexV1() {
         return $this->productInterface->getAllProductsV1();
+    }
+
+    public function getRelatedProducts(Request $request) {
+        return $this->productInterface->getRelatedProducts($request);
     }
 
     public function myProducts() {
