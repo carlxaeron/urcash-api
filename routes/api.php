@@ -396,6 +396,8 @@ Route::prefix('/v1')->group(function () {
             Route::delete('category/{id}', [App\Http\Controllers\Api\CategoryController::class, 'destroy']);
             // Order
             Route::get('orders','Api\OrderController@getAllOrders');
+            // Users
+            Route::get('users','Api\UserController@indexV1');
         }); 
     });
 });

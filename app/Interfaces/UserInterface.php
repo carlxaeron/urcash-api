@@ -38,6 +38,8 @@ interface UserInterface
      */
     public function getAllUsers();
 
+    public function getAllUsersV1();
+
     /**
      * Get User By ID
      *
