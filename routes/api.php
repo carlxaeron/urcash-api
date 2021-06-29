@@ -326,7 +326,7 @@ Route::prefix('/v1')->group(function () {
     // });
 
     // Settings
-    Route::get('settings', function(){
+    Route::get('/settings', function(){
         return response()->json([
             'message' => 'Fetched Settings',
             'error' => false,
@@ -343,14 +343,14 @@ Route::prefix('/v1')->group(function () {
     });
 
     // Login
-    Route::post('login', [App\Http\Controllers\Api\UserController::class, 'loginV1']);
-    Route::post('login-with-red', [App\Http\Controllers\Api\UserController::class, 'loginV1WithRed']);
+    Route::post('/login', [App\Http\Controllers\Api\UserController::class, 'loginV1']);
+    Route::post('/login-with-red', [App\Http\Controllers\Api\UserController::class, 'loginV1WithRed']);
 
     // Validate OTP on email
-    Route::post('validate-otp', 'Api\UserController@validateOtpV1');
+    Route::post('/validate-otp', 'Api\UserController@validateOtpV1');
 
     // Register
-    Route::post('register', [App\Http\Controllers\Api\UserController::class, 'registerV1']);
+    Route::post('/register', [App\Http\Controllers\Api\UserController::class, 'registerV1']);
 
     // Products
     Route::get('/products', 'Api\ProductController@indexV1');
@@ -361,7 +361,11 @@ Route::prefix('/v1')->group(function () {
     Route::get('/product/{id}', 'Api\ProductController@show');
 
     // Category
-    Route::get('category', [App\Http\Controllers\Api\CategoryController::class, 'index']);
+    Route::get('/category', [App\Http\Controllers\Api\CategoryController::class, 'index']);
+
+    // User
+    Route::get('/user/change-pass',[App\Http\Controllers\Api\UserController::class, 'resetPasswordSendCode']);
+    Route::post('/user/change-pass',[App\Http\Controllers\Api\UserController::class, 'resetPassword']);
     
     // Requires TOKEN
     Route::middleware('auth:api')->group(function () {
@@ -375,7 +379,7 @@ Route::prefix('/v1')->group(function () {
         Route::get('/order/me', 'Api\UserController@getUserPurchases');
 
         // Order
-        Route::put('order','Api\OrderController@update');
+        Route::put('/order','Api\OrderController@update');
 
         // Checkout
         Route::post('/checkout', [App\Http\Controllers\Api\ProductController::class, 'checkoutProductsV1']);
@@ -393,19 +397,19 @@ Route::prefix('/v1')->group(function () {
             Route::delete('/product/{id}', 'Api\ProductController@deleteV1');
             Route::post('/product', 'Api\ProductController@createV1');
             // Order
-            Route::get('orders/me','Api\OrderController@getAllUserOrders');
+            Route::get('/orders/me','Api\OrderController@getAllUserOrders');
         });
 
         // Admin Role
         Route::middleware(['role:administrator'])->group(function () {
             // Categories
-            Route::post('category', [App\Http\Controllers\Api\CategoryController::class, 'store']); 
-            Route::put('category/{id}', [App\Http\Controllers\Api\CategoryController::class, 'update']);
-            Route::delete('category/{id}', [App\Http\Controllers\Api\CategoryController::class, 'destroy']);
+            Route::post('/category', [App\Http\Controllers\Api\CategoryController::class, 'store']); 
+            Route::put('/category/{id}', [App\Http\Controllers\Api\CategoryController::class, 'update']);
+            Route::delete('/category/{id}', [App\Http\Controllers\Api\CategoryController::class, 'destroy']);
             // Order
-            Route::get('orders','Api\OrderController@getAllOrders');
+            Route::get('/orders','Api\OrderController@getAllOrders');
             // Users
-            Route::get('users','Api\UserController@indexV1');
+            Route::get('/users','Api\UserController@indexV1');
         }); 
     });
 });
