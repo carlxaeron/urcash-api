@@ -135,5 +135,5 @@ interface PurchaseInterface
      */
     public function salesByProvince(Request $request);
 
-    public function updateOrderStatus(Request $request);
+    // public function updateOrderStatus(Request $request);
 }
