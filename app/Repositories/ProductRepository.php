@@ -18,9 +18,11 @@ use App\ProductCategory;
 use App\ProductImage;
 use App\Repositories\PriceRepository;
 use App\Traits\ResponseAPI;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
@@ -58,6 +60,25 @@ class ProductRepository implements ProductInterface
             else $products = $products->get();
 
             return $this->success("All Products", new ResourcesProduct($products));
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function getRelatedProducts(Request $request)
+    {
+        try {
+            $products = Cache::remember('getRelatedProducts'.$request->limit, Carbon::now()->addDay(), function () use($request) {
+                $products = Product::with('owner')->verified()->related($request->product_id, $request->limit ? $request->limit : 20);
+    
+                if(request()->page) $products = $products->paginate(request()->per_page ?? 10);
+                else $products = $products->get();
+                
+                return $products;
+            });
+
+            return $this->success('All Related Products.', new ResourcesProduct($products));
+
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
