@@ -14,7 +14,7 @@ class UpdatePurchaseItemsAddDataColumn extends Migration
     public function up()
     {
         Schema::table('purchase_items', function (Blueprint $table) {
-            $table->longText('data')->after('payment_method');
+            $table->longText('data')->after('payment_method')->nullable();
         });
     }
 

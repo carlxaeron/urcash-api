@@ -75,6 +75,6 @@ class OrderController extends Controller
 
     public function getAllUserOrders(Request $request)
     {
-        return $this->orderInterface->getAllUserOrders($request);
+        return $this->orderInterface->getAllMerchantOrders($request);
     }
 }

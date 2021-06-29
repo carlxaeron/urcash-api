@@ -33,7 +33,7 @@ trait ResponseAPI
                     'message' => $message,
                     'error' => true,
                     'statusCode' => $statusCode > 0 ? $statusCode : 500,
-                ], $statusCode > 0 ? $statusCode : 500);
+                ], 500);
             }
         } catch (Exception $e) {
             if(config('API.debug')) dd($e);

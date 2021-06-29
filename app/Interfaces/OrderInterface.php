@@ -7,7 +7,7 @@ interface OrderInterface
 {
     public function updateOrderStatus(Request $request);
 
-    public function getAllUserOrders(Request $request);
+    public function getAllMerchantOrders(Request $request);
     
     public function getAllOrders(Request $request);
 }

@@ -379,11 +379,9 @@ Route::prefix('/v1')->group(function () {
         Route::delete('/product/image/{id}', 'Api\ProductImageController@destroy');
         
         // Admin/Merchant Role
-        Route::middleware(['role:administrator,merchant',function($a, $b){
+        Route::middleware(['role:administrator,merchant',function($response, $next){
             if(Auth::user()->merchant_level === 0) abort(403);
-            else {
-                return $b($a);
-            }
+            return $next($response);
         }])->group(function () {
             // Product
             Route::put('/product/{id}', 'Api\ProductController@updateV1');

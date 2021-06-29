@@ -10,7 +10,9 @@ We’re getting your order ready and will let you know once it’s on the way. W
 
 ## Delivery Details
 **Name:** {{$user->first_name}} {{$user->last_name}}<br/>
+@if($user->address)
 **Address:** {{$user->address->complete_address}}<br/>
+@endif
 **Phone:** {{$user->mobile_number}}<br/>
 **Email:** {{$user->email}}<br/>
 <hr/>
