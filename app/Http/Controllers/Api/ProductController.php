@@ -32,6 +32,10 @@ class ProductController extends Controller
         return $this->productInterface->getRelatedProducts($request);
     }
 
+    public function getSearchProducts(Request $request) {
+        return $this->productInterface->getSearchProducts($request);
+    }
+
     public function myProducts() {
         return $this->productInterface->getUserProducts();
     }

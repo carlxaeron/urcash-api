@@ -69,7 +69,7 @@ class ProductRepository implements ProductInterface
     {
         try {
             $products = Cache::remember('getRelatedProducts'.$request->limit, Carbon::now()->addDay(), function () use($request) {
-                $products = Product::with('owner')->verified()->related($request->product_id, $request->limit ? $request->limit : 20);
+                $products = Product::with('owner')->verified()->related($request->limit ? $request->limit : 20);
     
                 if(request()->page) $products = $products->paginate(request()->per_page ?? 10);
                 else $products = $products->get();
@@ -79,6 +79,30 @@ class ProductRepository implements ProductInterface
 
             return $this->success('All Related Products.', new ResourcesProduct($products));
 
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function getSearchProducts(Request $request)
+    {
+        try {
+            $inputs = [
+                'keyword' => $request->keyword,
+            ];
+            $rules = [
+                'keyword' => 'required',
+            ];
+            $validation = Validator::make($inputs, $rules);
+
+            if ($validation->fails()) return $this->error($validation->errors()->all());
+
+            $products = Product::with('owner')->verified()->search($request->keyword);
+
+            if(request()->page) $products = $products->paginate(request()->per_page ?? 10);
+            else $products = $products->get();
+
+            return $this->success('All Searched Products.', new ResourcesProduct($products));
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }

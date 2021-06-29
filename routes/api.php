@@ -355,6 +355,7 @@ Route::prefix('/v1')->group(function () {
     // Products
     Route::get('/products', 'Api\ProductController@indexV1');
     Route::get('/products/related', 'Api\ProductController@getRelatedProducts');
+    Route::get('/products/search', 'Api\ProductController@getSearchProducts');
 
     // Product
     Route::get('/product/{id}', 'Api\ProductController@show');

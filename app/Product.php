@@ -44,9 +44,17 @@ class Product extends Model
     public function scopeVerified($query) {
         return $query->where('is_verified',1);
     }
-
-    public function scopeRelated($query, $id, $limit) {
+    public function scopeRelated($query, $limit) {
         return $query->inRandomOrder()->limit($limit);
+    }
+    public function scopeSearch($query, $keyword) {
+        return $query->where(function($q) use($keyword) {
+            return $q
+            ->where('name','like','%'.$keyword.'%')
+            ->orWhere('description','like','%'.$keyword.'%')
+            // ->orWhere('name','like','%'.$keyword.'%')
+            ;
+        });
     }
 
     /**
