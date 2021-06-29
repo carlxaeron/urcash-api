@@ -62,9 +62,12 @@ class OrderRepository implements OrderInterface
 
             $order = PurchaseItem::find($request->order_id);
 
+            $STEP = $order->purchase_step;
+
             if($request->status) {
                 $order->status = $request->status;
                 if($request->status == 'shipped') {
+                    if($user->merchant_level === 0) return $this->error('You dont have permission to make the status shipped.',403);
                     $data = $order->data ? $order->data : [];
                     $data['STATUS_SHIPPED__tracking_number'] = $request->tracking_number;
                     $data['STATUS_SHIPPED__remarks'] = $request->remarks;
@@ -78,6 +81,9 @@ class OrderRepository implements OrderInterface
                     $order->data = $data;
                 }
                 elseif($request->status == 'completed') {
+                    if($order->user_id == $user->id || $order->product->user_id == $user->id) {
+                        // do nothing
+                    } else return $this->error('You dont have permission to make the status completed.',403);
                     $data = $order->data ? $order->data : [];
                     $data['STATUS_COMPLETED__date'] = date('Y-m-d H:i:s', strtotime(now()));
                     $order->data = $data;
@@ -85,6 +91,12 @@ class OrderRepository implements OrderInterface
             }
 
             $order->save();
+
+            // Check Proper Process
+            if($STEP === 4) return $this->error('Actions are not valid.',403);
+            elseif($order->purchase_step !== 0) {
+                if(($order->purchase_step - $STEP) !== 1) return $this->error('Actions are not valid.',403);
+            }
 
             DB::commit();
 
