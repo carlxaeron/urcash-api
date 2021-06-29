@@ -5,6 +5,7 @@ use App\Http\Resources\PurchaseItems;
 use App\Interfaces\OrderInterface;
 use App\PurchaseItem;
 use App\Traits\ResponseAPI;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -66,11 +67,18 @@ class OrderRepository implements OrderInterface
                     $data = $order->data ? $order->data : [];
                     $data['STATUS_SHIPPED__tracking_number'] = $request->tracking_number;
                     $data['STATUS_SHIPPED__remarks'] = $request->remarks;
+                    $data['STATUS_SHIPPED__date'] = date('Y-m-d H:i:s', strtotime(now()));
                     $order->data = $data;
                 }
-                elseif($request->status == 'shipped') {
+                elseif($request->status == 'cancelled') {
                     $data = $order->data ? $order->data : [];
                     $data['STATUS_CANCELLED__remarks'] = $request->remarks;
+                    $data['STATUS_CANCELLED__date'] = date('Y-m-d H:i:s', strtotime(now()));
+                    $order->data = $data;
+                }
+                elseif($request->status == 'completed') {
+                    $data = $order->data ? $order->data : [];
+                    $data['STATUS_COMPLETED__date'] = date('Y-m-d H:i:s', strtotime(now()));
                     $order->data = $data;
                 }
             }
