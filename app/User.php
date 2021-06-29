@@ -50,6 +50,10 @@ class User extends Authenticatable implements CanResetPasswordContract
         'address'
     ];
 
+    protected $appends = [
+        'merchant_level'
+    ];
+
     /**
      * Serialize timestamps as datetime strings without the timezone.
      */
@@ -86,6 +90,17 @@ class User extends Authenticatable implements CanResetPasswordContract
 
     public function setPasswordAttribute ($value) {
         $this->attributes['password'] = Hash::make($value);
+    }
+
+    public function getMerchantLevelAttribute() {
+        if($this->hasRole('administrator')) {
+            return 1;
+        }
+        elseif($this->hasRole('merchant')) {
+            return $this->status ? 1 : 0;
+        } else {
+            return 0;
+        }
     }
 
     /**

@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 
@@ -378,7 +379,12 @@ Route::prefix('/v1')->group(function () {
         Route::delete('/product/image/{id}', 'Api\ProductImageController@destroy');
         
         // Admin/Merchant Role
-        Route::middleware(['role:administrator,merchant'])->group(function () {
+        Route::middleware(['role:administrator,merchant',function($a, $b){
+            if(Auth::user()->merchant_level === 0) abort(403);
+            else {
+                return $b($a);
+            }
+        }])->group(function () {
             // Product
             Route::put('/product/{id}', 'Api\ProductController@updateV1');
             Route::delete('/product/{id}', 'Api\ProductController@deleteV1');
