@@ -87,6 +87,11 @@ class UserController extends Controller
     {
         return $this->userInterface->sendResetPasswordLinkEmail($request);
     }
+    
+    public function sendResetPasswordLinkEmailV1(Request $request)
+    {
+        return $this->userInterface->sendResetPasswordLinkEmailV1($request);
+    }
 
     /**
      * Reset user password by providing new password
@@ -94,6 +99,11 @@ class UserController extends Controller
     public function resetPasswordWithToken(Request $request)
     {
         return $this->userInterface->resetPasswordWithToken($request);
+    }
+
+    public function resetPasswordWithTokenV1(Request $request)
+    {
+        return $this->userInterface->resetPasswordWithTokenV1($request);
     }
 
     /**
