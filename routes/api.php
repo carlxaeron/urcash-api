@@ -366,6 +366,8 @@ Route::prefix('/v1')->group(function () {
     // User
     // Route::get('/user/change-pass',[App\Http\Controllers\Api\UserController::class, 'resetPasswordSendCode']);
     // Route::post('/user/change-pass',[App\Http\Controllers\Api\UserController::class, 'resetPassword']);
+    Route::post('/user/send-reset-link','Api\UserController@sendResetPasswordLinkEmailV1');
+    Route::post('/user/reset-password','Api\UserController@resetPasswordWithTokenV1');
     
     // Requires TOKEN
     Route::middleware('auth:api')->group(function () {

@@ -78,6 +78,8 @@ interface UserInterface
      */
     public function sendResetPasswordLinkEmail(Request $request);
 
+    public function sendResetPasswordLinkEmailV1(Request $request);
+
     /**
      * Reset user password by providing new password
      *
@@ -86,6 +88,8 @@ interface UserInterface
      * @access  public
      */
     public function resetPasswordWithToken(Request $request);
+
+    public function resetPasswordWithTokenV1(Request $request);
 
     /**
      * Create user

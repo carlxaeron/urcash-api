@@ -103,7 +103,7 @@ class UserRepository implements UserInterface
                 'password' => $request->password,
             ];
             $rules = [
-                'email' => 'required|email:rfc,strict',
+                'email' => 'required|email:rfc,strict|exists:users,email',
                 'password' => 'required'
             ];
 
@@ -111,6 +111,8 @@ class UserRepository implements UserInterface
 
             if ($validation->fails()) return $this->error($validation->errors()->all());
             $user = User::where('email', $request->email)->with(['userRoles.role'])->first();
+
+            if(!Hash::check($request->password, $user->password)) return $this->error('Invalid Password.');
 
             if(!$user) return $this->error('Email is not yet registered.');
             else {
@@ -328,6 +330,33 @@ class UserRepository implements UserInterface
         }
     }
 
+    public function sendResetPasswordLinkEmailV1(Request $request)
+    {
+        try {
+            $inputs = ['email' => $request->email];
+            $rules = ['email' => 'required|email|exists:users,email'];
+            $validation = Validator::make($inputs, $rules);
+
+            if ($validation->fails()) return $this->error($validation->errors()->all());
+
+            // We will send the password reset link to this user. Once we have attempted to send the link, we will
+            // examine the response then see the message we need to show. Finally, we'll send out a proper response
+            $response = Password::broker()->sendResetLink($request->only('email'));
+
+            // Send error when user has recently requested for a password reset link. Requests are throttled for 1 minute
+            if ($response == 'passwords.throttled') {
+                return $this->error("You have requested password reset recently. Please check your email", 429);
+            }
+
+            $user = User::where('email', '=', $request->email)->first();
+            $request->email = $user->email;
+
+            return $this->success("Password reset link successfully sent to email", array("email" => $user->email));
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
     public function resetPasswordWithToken(Request $request)
     {
         try {
@@ -362,6 +391,52 @@ class UserRepository implements UserInterface
             if ($response == 'passwords.token') return $this->error("Token has expired.");
 
             $user = User::where('mobile_number', '=', $request->mobile_number)->first();
+
+            return $this->success("Your password has been reset", $user);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function resetPasswordWithTokenV1(Request $request)
+    {
+        try {
+            $inputs = [
+                'email' => $request->email,
+                'password' => $request->password,
+                'password_confirmation' => $request->password_confirmation,
+                'token' => $request->token
+            ];
+            $rules = [
+                'email' => 'required|email|exists:users,email',
+                'password' => 'required|same:password_confirmation|min:8', // Must be the same with input name: "password_confirmation"
+                'token' => 'required' // Must match the token received on email. This value is found between 'reset/' and '?email='
+            ];
+            $validation = Validator::make($inputs, $rules);
+
+            if ($validation->fails()) return $this->error($validation->errors()->all());
+
+            // Get the password reset credentials from the request. Here we will attempt to reset the user's password.
+            // If it is successful we will update the password on an actual user model and persist it to the database.
+            $response = Password::broker()->reset(
+                $request->only('email', 'password', 'password_confirmation', 'token'),
+                function ($user, $password) {
+                    // dd($user, $password);
+                    if(Hash::needsRehash($user->password)) {
+                        $user->password = Hash::make($password);
+                    } else {
+                        $user->password = Hash::make($password);
+                    }
+                    $user->remember_token = Str::random(60);
+                    $user->save();
+
+                    event(new PasswordReset($user));
+                }
+            );
+            // Send error when user has recently reset password and this token is already expired after resetting it
+            if ($response == 'passwords.token') return $this->error("Token has expired.");
+
+            $user = User::where('email', '=', $request->email)->first();
 
             return $this->success("Your password has been reset", $user);
         } catch (\Exception $e) {
