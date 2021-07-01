@@ -233,6 +233,7 @@ class ProductRepository implements ProductInterface
                     'user_id'=>$user->id,
                     'price'=>$product->prices->price,
                     'batch_code'=>$batchCode,
+                    'data'=>1
                 ]);
                 $p->status = 'processing';
                 $p->purchase_status = 'unpaid';
