@@ -159,6 +159,35 @@ class UserRepository implements UserInterface
         }
     }
 
+    public function verifyMerchant(Request $request)
+    {
+        try {
+            $inputs = [
+                'id' => $request->id,
+            ];
+            $rules = [
+                'id' => 'required|exists:users,id',
+            ];
+
+            $validation = Validator::make($inputs, $rules);
+
+            if ($validation->fails()) return $this->error($validation->errors()->all());
+
+            $user = User::find($request->id);
+
+            if($user->merchant_level > 0) return $this->error('User is already merchant');
+            elseif(!$user->hasRole('merchant')) return $this->error('User role cannot be as merchant');
+
+            $user->status = 1;
+            $user->save();
+
+            return $this->success('User successfully as merchant', $user);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
     public function getAllUsers()
     {
         try {
