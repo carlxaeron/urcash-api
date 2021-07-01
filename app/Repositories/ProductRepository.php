@@ -242,9 +242,9 @@ class ProductRepository implements ProductInterface
             }
             $purchase = PurchaseItem::with(['product.categories.category'])->where('batch_code', $batchCode)->get();
 
-            DB::commit();
-
             $user->notify(new NotificationsCheckoutProducts($user, $purchase));
+            
+            DB::commit();
 
             return $this->success("Transaction complete", array(
                 "products_purchased" => $request->products,

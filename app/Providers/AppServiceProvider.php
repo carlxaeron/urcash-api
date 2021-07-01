@@ -140,6 +140,10 @@ class AppServiceProvider extends ServiceProvider
             'App\Interfaces\OrderInterface',
             'App\Repositories\OrderRepository'
         );
+        $this->app->bind(
+            'App\Interfaces\PaymentInterface',
+            'App\Repositories\PaymentRepository'
+        );
     }
 
     /**

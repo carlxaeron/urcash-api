@@ -18,6 +18,11 @@
         'v1'=>[
             'COD',
             'bank',
+        ],
+        'v1_2'=>[
+            'COD',
+            'bank',
+            'piopiayay',
         ]
     ]
 ];

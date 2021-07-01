@@ -336,7 +336,7 @@ Route::prefix('/v1')->group(function () {
                 'orders'=>[
                     'status'=>config('purchase_statuses.status.v1'),
                     'purchase_status'=>config('purchase_statuses.purchase_status.v1'),
-                    'payment_method'=>config('purchase_statuses.payment_method.v1'),
+                    'payment_method'=>config('purchase_statuses.payment_method.v1_2'),
                 ]
             ]
         ], 200);
@@ -364,8 +364,8 @@ Route::prefix('/v1')->group(function () {
     Route::get('/category', [App\Http\Controllers\Api\CategoryController::class, 'index']);
 
     // User
-    Route::get('/user/change-pass',[App\Http\Controllers\Api\UserController::class, 'resetPasswordSendCode']);
-    Route::post('/user/change-pass',[App\Http\Controllers\Api\UserController::class, 'resetPassword']);
+    // Route::get('/user/change-pass',[App\Http\Controllers\Api\UserController::class, 'resetPasswordSendCode']);
+    // Route::post('/user/change-pass',[App\Http\Controllers\Api\UserController::class, 'resetPassword']);
     
     // Requires TOKEN
     Route::middleware('auth:api')->group(function () {
@@ -386,6 +386,11 @@ Route::prefix('/v1')->group(function () {
         
         // Product Image
         Route::delete('/product/image/{id}', 'Api\ProductImageController@destroy');
+
+        // Payment
+        Route::post('/payment/request', 'Api\PaymentController@paymentRequest');
+        Route::get('/payment/callback', 'Api\PaymentController@paymentCallback');
+        Route::get('/payment/checker', 'Api\PaymentController@paymentChecker');
         
         // Admin/Merchant Role
         Route::middleware(['role:administrator,merchant',function($response, $next){
