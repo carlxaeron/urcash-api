@@ -30,6 +30,8 @@ interface UserInterface
      */
     public function loginV1WithRed(Request $request);
 
+    public function verifyMerchant(Request $request);
+
     /**
      * Get all users
      *

@@ -415,6 +415,7 @@ Route::prefix('/v1')->group(function () {
             Route::get('/orders','Api\OrderController@getAllOrders');
             // Users
             Route::get('/users','Api\UserController@indexV1');
+            Route::put('/user/verify-merchant/{id}','Api\UserController@verifyMerchant');
         }); 
     });
 });

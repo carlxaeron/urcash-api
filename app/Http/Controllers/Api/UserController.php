@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Interfaces\UserInterface;
+use App\User;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
@@ -31,6 +32,10 @@ class UserController extends Controller
     public function indexV1()
     {
         return $this->userInterface->getAllUsersV1();
+    }
+
+    public function verifyMerchant(Request $request){
+        return $this->userInterface->verifyMerchant($request);
     }
 
     /**
