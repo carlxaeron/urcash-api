@@ -132,4 +132,7 @@ class ProductController extends Controller
     public function createV1(Request $request) {
         return $this->productInterface->createProductV1($request);
     }
+    public function verifyProduct(Request $request) {
+        return $this->productInterface->verifyProduct($request);
+    }
 }

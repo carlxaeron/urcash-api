@@ -44,6 +44,9 @@ class Product extends Model
     public function scopeVerified($query) {
         return $query->where('is_verified',1);
     }
+    public function scopeUnverified($query) {
+        return $query->where('is_verified',0);
+    }
     public function scopeRelated($query, $limit) {
         return $query->inRandomOrder()->limit($limit);
     }

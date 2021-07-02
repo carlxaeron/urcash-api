@@ -123,4 +123,6 @@ interface ProductInterface
     public function createProduct(Request $request);
 
     public function createProductV1(Request $request);
+
+    public function verifyProduct(Request $request);
 }

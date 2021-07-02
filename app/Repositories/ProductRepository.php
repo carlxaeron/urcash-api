@@ -618,8 +618,7 @@ class ProductRepository implements ProductInterface
 
             $user = Auth::user();
 
-            // @todo: Verifiy product
-            $inputs['is_verified'] = true;
+            $inputs['is_verified'] = false;
             $inputs['user_id'] = $user->id;
 
             $product = Product::create($inputs);
@@ -745,6 +744,37 @@ class ProductRepository implements ProductInterface
                 return $this->success("Product created", $product);
             }
         } catch (\Exception $e) {
+            DB::rollBack();
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function verifyProduct(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $inputs = [
+                'id' => $request->id,
+            ];
+            $rules = [
+                'id' => 'required|exists:products,id'
+            ];
+            $validation = Validator::make($inputs, $rules);
+
+            if ($validation->fails()) return $this->error($validation->errors()->all());
+
+            $product = Product::unverified($request->id)->first();
+
+            if(!$product) return $this->error('Product not exists or its already verified.');
+
+            $product->is_verified = 1;
+            $product->save();
+
+            return $this->success("Product successfully verified.", $product);
+
+            DB::commit();
+        } catch (Exception $e)
+        {
             DB::rollBack();
             return $this->error($e->getMessage(), $e->getCode());
         }

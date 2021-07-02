@@ -420,6 +420,8 @@ Route::prefix('/v1')->group(function () {
             // Users
             Route::get('/users','Api\UserController@indexV1');
             Route::put('/user/verify-merchant/{id}','Api\UserController@verifyMerchant');
+            // Verify Product
+            Route::put('/product/verify/{id}', 'Api\ProductController@verifyProduct');
         }); 
     });
 });
