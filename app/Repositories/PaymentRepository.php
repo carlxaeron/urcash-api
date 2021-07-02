@@ -153,14 +153,13 @@ class PaymentRepository implements PaymentInterface
 
             if ($validation->fails()) return $this->error($validation->errors()->all());
 
-            // if($inputs['status'] !== 'draft') return $this->error('Already validated this invoice.');
+            $invoice = Invoice::checkoutItemsRef($request->txnid)->first();
+            if($invoice->status !== 'draft') return $this->error('Already validated this invoice.');
 
             if($inputs['status'] == 'S') {
-                $invoice = Invoice::checkoutItemsRef($request->txnid)->first();
                 $invoice->status = 'paid';
                 $invoice->save();
             } else {
-                $invoice = Invoice::checkoutItemsRef($request->txnid)->first();
                 $invoice->status = 'unpaid';
                 $invoice->save();
             }
