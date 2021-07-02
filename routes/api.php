@@ -368,6 +368,11 @@ Route::prefix('/v1')->group(function () {
     // Route::post('/user/change-pass',[App\Http\Controllers\Api\UserController::class, 'resetPassword']);
     Route::post('/user/send-reset-link','Api\UserController@sendResetPasswordLinkEmailV1');
     Route::post('/user/reset-password','Api\UserController@resetPasswordWithTokenV1');
+
+    // Payment
+    Route::post('/payment/request', 'Api\PaymentController@paymentRequest');
+    Route::get('/payment/callback', 'Api\PaymentController@paymentCallback');
+    Route::get('/payment/checker', 'Api\PaymentController@paymentChecker');
     
     // Requires TOKEN
     Route::middleware('auth:api')->group(function () {
@@ -388,11 +393,6 @@ Route::prefix('/v1')->group(function () {
         
         // Product Image
         Route::delete('/product/image/{id}', 'Api\ProductImageController@destroy');
-
-        // Payment
-        Route::post('/payment/request', 'Api\PaymentController@paymentRequest');
-        Route::get('/payment/callback', 'Api\PaymentController@paymentCallback');
-        Route::get('/payment/checker', 'Api\PaymentController@paymentChecker');
         
         // Admin/Merchant Role
         Route::middleware(['role:administrator,merchant',function($response, $next){
