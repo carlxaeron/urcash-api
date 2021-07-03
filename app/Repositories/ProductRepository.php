@@ -254,8 +254,8 @@ class ProductRepository implements ProductInterface
                     'data'=>1
                 ]);
                 $p->status = 'processing';
-                $p->purchase_status = 'unpaid';
-                $p->payment_method = 'COD';
+                $p->purchase_status = $request->purchase_status;
+                $p->payment_method = $request->payment_method;
                 $p->save();
                 $subtotal += ($product->prices->price * $prod['quantity']);
             }
