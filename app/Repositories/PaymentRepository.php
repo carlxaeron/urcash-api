@@ -169,7 +169,7 @@ class PaymentRepository implements PaymentInterface
             DB::commit();
 
             // return $this->success('Success validated products.', $invoice);
-            return response('<script>window.close();</script>');
+            return response('PAYMENT SUCCESS<script>window.close();</script>');
         } catch (Exception $e) {
             DB::rollBack();
             return $this->error($e->getMessage());

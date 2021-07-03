@@ -401,6 +401,7 @@ Route::prefix('/v1')->group(function () {
             if(Auth::user()->merchant_level === 0) abort(403);
             return $next($response);
         }])->group(function () {
+            
             // Product
             Route::put('/product/{id}', 'Api\ProductController@updateV1');
             Route::delete('/product/{id}', 'Api\ProductController@deleteV1');
