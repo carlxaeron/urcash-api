@@ -353,7 +353,7 @@ Route::prefix('/v1')->group(function () {
     Route::post('/register', [App\Http\Controllers\Api\UserController::class, 'registerV1']);
 
     // Products
-    Route::get('/products', 'Api\ProductController@indexV1');
+    Route::get('/products', 'Api\ProductController@indexV1'); 
     Route::get('/products/related', 'Api\ProductController@getRelatedProducts');
     Route::post('/products/search', 'Api\ProductController@getSearchProducts');
 
@@ -401,7 +401,7 @@ Route::prefix('/v1')->group(function () {
             if(Auth::user()->merchant_level === 0) abort(403);
             return $next($response);
         }])->group(function () {
-            
+
             // Product
             Route::put('/product/{id}', 'Api\ProductController@updateV1');
             Route::delete('/product/{id}', 'Api\ProductController@deleteV1');
@@ -412,6 +412,8 @@ Route::prefix('/v1')->group(function () {
 
         // Admin Role
         Route::middleware(['role:administrator'])->group(function () {
+            // products
+            Route::get('/products/all', 'Api\ProductController@allProducts');
             // Categories
             Route::post('/category', [App\Http\Controllers\Api\CategoryController::class, 'store']); 
             Route::put('/category/{id}', [App\Http\Controllers\Api\CategoryController::class, 'update']);

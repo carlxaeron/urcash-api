@@ -16,6 +16,8 @@ interface ProductInterface
 
     public function getAllProductsV1();
 
+    public function getAllProductsAdmin();
+
     public function getRelatedProducts(Request $request);
 
     public function getSearchProducts(Request $request);

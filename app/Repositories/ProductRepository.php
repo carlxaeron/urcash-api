@@ -65,6 +65,24 @@ class ProductRepository implements ProductInterface
         }
     }
 
+    public function getAllProductsAdmin()
+    {
+        try {
+            $products = Product::with('owner');
+
+            if ($products->count() < 1) {
+                return $this->error("Products not found", 404);
+            }
+
+            if(request()->page) $products = $products->paginate(request()->per_page ?? 10);
+            else $products = $products->get();
+
+            return $this->success("All Products", new ResourcesProduct($products));
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
     public function getRelatedProducts(Request $request)
     {
         try {
