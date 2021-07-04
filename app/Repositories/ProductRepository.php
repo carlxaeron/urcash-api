@@ -68,6 +68,7 @@ class ProductRepository implements ProductInterface
     public function getAllProductsAdmin()
     {
         try {
+            
             $products = Product::with('owner');
 
             if ($products->count() < 1) {
@@ -129,6 +130,7 @@ class ProductRepository implements ProductInterface
     public function getUserProducts()
     {
         try {
+
             $products = Product::where('user_id',Auth::user()->id);
 
             if ($products->count() < 1) {
