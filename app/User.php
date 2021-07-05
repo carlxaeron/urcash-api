@@ -97,7 +97,8 @@ class User extends Authenticatable implements CanResetPasswordContract
             return 1;
         }
         elseif($this->hasRole('merchant')) {
-            return $this->status ? 1 : 0;
+            // return $this->status ? 1 : 0;
+            return 1;
         } else {
             return 0;
         }
