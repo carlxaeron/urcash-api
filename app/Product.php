@@ -63,7 +63,7 @@ class Product extends Model
         if($cat = request()->category) {
             // $query = $query->categories->where('category_id',$cat);
             $ids = ProductCategory::where('category_id',$cat)->get('product_id')->map(function($v) { return $v['product_id']; })->toArray();
-            if(count($ids)) $query = $query->where('id',$ids);
+            if(count($ids)) $query = $query->whereIn('id',$ids);
             else $query = $query->where('id',[0]);
         }
         if($ob = request()->order_by) {
