@@ -850,6 +850,36 @@ class UserRepository implements UserInterface
         }
     }
 
+    public function updateUserAvatar(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $inputs = [
+                'picture'=>$request->picture
+            ];
+            $rules = [
+                'picture'=>'required|image',
+            ];
+            $validation = Validator::make($inputs, $rules);
+
+            if ($validation->fails()) return $this->error($validation->errors()->all());
+
+            $user = User::find(Auth::user()->id);
+
+            $user->profile_picture = $request->picture->store('image/profile');
+            $user->save();
+
+            DB::commit();
+
+            $user = User::find($user->id);
+
+            return $this->success('Successfully updated your profile picture.', new ResourcesUser($user));
+        } catch (Exception $e) {
+            DB::rollback();
+            return $this->error($e->getMessage(), (int) $e->getCode());
+        }
+    }
+
     public function getUserPurchases()
     {
         try {

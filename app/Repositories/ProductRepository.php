@@ -624,7 +624,7 @@ class ProductRepository implements ProductInterface
             $rules = [
                 'price' => 'required|numeric|min:0',
                 'name' => 'required',
-                'image' => 'required|max:5|array',
+                'image' => 'required|max:3|array',
                 'description' => 'required',
                 'categories' => ['required','array', function($attr, $value, $fail){
                     foreach($value as $v) {

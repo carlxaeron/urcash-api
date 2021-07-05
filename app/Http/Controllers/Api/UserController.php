@@ -209,6 +209,11 @@ class UserController extends Controller
         return $this->userInterface->updateUserAddress($request);
     }
 
+    public function updateUserAvatar(Request $request)
+    {
+        return $this->userInterface->updateUserAvatar($request);
+    }
+    
     /**
      * Get user purchases
      *

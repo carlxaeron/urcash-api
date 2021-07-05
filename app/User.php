@@ -104,6 +104,10 @@ class User extends Authenticatable implements CanResetPasswordContract
         }
     }
 
+    public function getProfilePictureAttribute() {
+        return asset($this->attributes['profile_picture']);
+    }
+
     /**
      * Foreign key relationships
      */

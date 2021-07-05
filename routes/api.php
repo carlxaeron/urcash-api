@@ -380,6 +380,7 @@ Route::prefix('/v1')->group(function () {
         // User -
         Route::get('/user/me', 'Api\UserController@getUserInfo');
         Route::post('/user/me/address', 'Api\UserController@updateUserAddress');
+        Route::post('/user/me/profile-pic', 'Api\UserController@updateUserAvatar');
         // User - Purchases
         Route::get('/order/me', 'Api\UserController@getUserPurchases');
 
@@ -422,7 +423,7 @@ Route::prefix('/v1')->group(function () {
             Route::get('/orders','Api\OrderController@getAllOrders');
             // Users
             Route::get('/users','Api\UserController@indexV1');
-            Route::put('/user/verify-merchant/{id}','Api\UserController@verifyMerchant');
+            // Route::put('/user/verify-merchant/{id}','Api\UserController@verifyMerchant');
             // Verify Product
             Route::put('/product/verify/{id}', 'Api\ProductController@verifyProduct');
         }); 
