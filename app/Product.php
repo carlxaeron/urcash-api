@@ -100,7 +100,7 @@ class Product extends Model
                 })
                 ;
             }
-            elseif($red == 'premium') {
+            elseif($red == 'privilege') {
                 $query->leftJoin('users','users.id','=','products.user_id')
                 ->where(function($q){
                     $q
