@@ -458,6 +458,11 @@ class UserRepository implements UserInterface
                 'password' => $request->password,
                 'repeat_password' => $request->repeat_password,
                 'code' => $request->code,
+                'province' => $request->province,
+                'city' => $request->city,
+                'barangay' => $request->barangay,
+                'street' => $request->street,
+                'country' => $request->country,
             ];
             $rules = [
                 'last_name' => 'required',
@@ -472,6 +477,11 @@ class UserRepository implements UserInterface
                 'birth_date' => 'required|date',
                 'password' => 'required|min:6',
                 'repeat_password' => 'required|same:password',
+                'province' => 'required',
+                'city' => 'required',
+                'barangay' => 'required',
+                'street' => 'required',
+                'country' => 'required',
             ];
             if($request->code) {
                 $rules['code'] = ['sometimes',function($attr,$value,$fail) {
@@ -499,6 +509,12 @@ class UserRepository implements UserInterface
                 // Role
                 UsersRole::create(['user_id'=>$user->id,'role_id'=>Role::where('slug','merchant')->first()->id]);
 
+                // Address
+                $address = Address::create($inputs);
+
+                $user->address_id = $address->id;
+                $user->save();
+
                 $token = array(
                     'token' => $user->createToken('Auth Token')->accessToken,
                     'user'=>$user
@@ -516,7 +532,13 @@ class UserRepository implements UserInterface
 
                 // Role
                 UsersRole::create(['user_id'=>$user->id,'role_id'=>Role::where('slug','merchant')->first()->id]);
-    
+
+                // Address
+                $address = Address::create($inputs);
+
+                $user->address_id = $address->id;
+                $user->save();
+
                 $otp = app(Helper::class)->generateCode();
                 $user->otp = $otp;
                 $user->save();
