@@ -78,6 +78,48 @@ class Product extends Model
                 $query->orderBy('created_at', $sort);
             }
         }
+        if($red = request()->red_category) {
+            $query->select('products.*');
+            if($red == 'premium') {
+                $query->leftJoin('users','users.id','=','products.user_id')
+                ->where(function($q){
+                    $q
+                    ->where('users.vip_level','5')
+                    ->orWhere('users.vip_level','6')
+                    ;
+                })
+                ;
+            }
+            elseif($red == 'preffered') {
+                $query->leftJoin('users','users.id','=','products.user_id')
+                ->where(function($q){
+                    $q
+                    ->where('users.vip_level','3')
+                    ->orWhere('users.vip_level','4')
+                    ;
+                })
+                ;
+            }
+            elseif($red == 'premium') {
+                $query->leftJoin('users','users.id','=','products.user_id')
+                ->where(function($q){
+                    $q
+                    ->where('users.vip_level','1')
+                    ->orWhere('users.vip_level','2')
+                    ;
+                })
+                ;
+            }
+            else {
+                $query->leftJoin('users','users.id','=','products.user_id')
+                ->where(function($q){
+                    $q
+                    ->where('users.vip_level','0')
+                    ;
+                })
+                ;
+            }
+        }
         return $query;
     }
 
@@ -93,6 +135,6 @@ class Product extends Model
     }
 
     public function getPriceAttribute() {
-        return $this->prices->price;
+        return $this->prices ? $this->prices->price : 'ERROR';
     }
 }
