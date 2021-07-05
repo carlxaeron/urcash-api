@@ -254,7 +254,7 @@ class ProductRepository implements ProductInterface
                     'user_id'=>$user->id,
                     'price'=>$product->prices->price,
                     'batch_code'=>$batchCode,
-                    'note'=>$request->note,
+                    'note'=>$prod['note'],
                     'data'=>[]
                 ]);
                 $p->status = 'processing';
