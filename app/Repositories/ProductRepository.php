@@ -514,23 +514,27 @@ class ProductRepository implements ProductInterface
     }
     public function updateProductV1(Request $request, $id)
     {
+        DB::beginTransaction();
         try {
             $user = Auth::user();
-            $product = Product::where('id',$id)->where('user_id',$user->id)->first();
-
-            if (!$product) return $this->error("Product not found", 404);
+            $product = Product::where('id',$id);
+            if(!$user->hasRole('administrator')) {
+                $product = $product->where('user_id',$user->id);
+            }
+            $product = $product->first();
+            if (!$product) return $this->error("Product not found or you have not permission to update this product.", 404);
 
             $inputs = [
                 'price' => $request->price,
                 'name' => $request->name,
                 // 'image' =>  $request->image,
-                // 'description' =>  $request->description,
+                'description' =>  $request->description,
             ];
             $rules = [
                 'price' => 'required|numeric|min:0',
                 'name' => 'required',
-                // 'image' => 'required|max:5|array',
-                // 'description' => 'required',
+                // 'image' => 'required|max:3|array',
+                'description' => 'required',
             ];
             $validation = Validator::make($inputs, $rules);
 
@@ -542,28 +546,17 @@ class ProductRepository implements ProductInterface
                 $price_repository = new PriceRepository();
                 $get_price = $price_repository->updatePriceV1($request, $get_price->id)->getData()->results;
             }
-            if ($request->has('sku')) {
-                $product->sku = $request->sku;
-            }
-            if ($request->has('ean')) {
-                $product->ean = $request->ean;
-            }
-            if ($request->has('name')) {
-                $product->name = $request->name;
-            }
-            if ($request->has('manufacturer_name')) {
-                $product->manufacturer_name = $request->manufacturer_name;
-            }
-            if ($request->has('variant')) {
-                $product->variant = $request->variant;
-            }
-            $product->save();
+
+            $product->update($inputs);
+            // dd($product);
+            DB::commit();
 
             return $this->success("Product updated", array(
                 "product" => $product,
                 "price" => $get_price->price
             ));
         } catch (\Exception $e) {
+            // dd($e);
             DB::rollBack();
             return $this->error($e->getMessage(), $e->getCode());
         }
