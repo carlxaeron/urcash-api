@@ -59,6 +59,15 @@ class Product extends Model
             ;
         });
     }
+    public function scopeFilters($query) {
+        if($cat = request()->category) {
+            // $query = $query->categories->where('category_id',$cat);
+            $ids = ProductCategory::where('category_id',$cat)->get('product_id')->map(function($v) { return $v['product_id']; })->toArray();
+            if(count($ids)) $query = $query->where('id',$ids);
+            else $query = $query->where('id',[0]);
+        }
+        return $query;
+    }
 
     /**
      * Serialize timestamps as datetime strings without the timezone.

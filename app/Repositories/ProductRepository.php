@@ -50,7 +50,7 @@ class ProductRepository implements ProductInterface
     public function getAllProductsV1()
     {
         try {
-            $products = Product::with('owner')->verified();
+            $products = Product::with('owner')->verified()->filters();
 
             if ($products->count() < 1) {
                 return $this->error("Products not found", 404);
