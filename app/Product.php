@@ -66,6 +66,18 @@ class Product extends Model
             if(count($ids)) $query = $query->where('id',$ids);
             else $query = $query->where('id',[0]);
         }
+        if($ob = request()->order_by) {
+            $sort = request()->sort_by ? request()->sort_by : 'asc';
+            if($ob == 'id') {
+                $query->orderBy('id', $sort);
+            }
+            elseif($ob == 'name') {
+                $query->orderBy('name', $sort);
+            }
+            elseif($ob == 'date') {
+                $query->orderBy('created_at', $sort);
+            }
+        }
         return $query;
     }
 
