@@ -231,6 +231,7 @@ class ProductRepository implements ProductInterface
         try {
             $inputs = [
                 'products' => $request->products,
+                'note' => $request->note,
             ];
             $rules = [
                 'products' => 'required',
@@ -253,11 +254,12 @@ class ProductRepository implements ProductInterface
                     'user_id'=>$user->id,
                     'price'=>$product->prices->price,
                     'batch_code'=>$batchCode,
-                    'data'=>1
+                    'note'=>$request->note,
+                    'data'=>[]
                 ]);
                 $p->status = 'processing';
-                $p->purchase_status = $request->purchase_status;
-                $p->payment_method = $request->payment_method;
+                $p->purchase_status = $request->purchase_status ?? 'unpaid';
+                $p->payment_method = $request->payment_method ?? 'COD';
                 $p->save();
                 $subtotal += ($product->prices->price * $prod['quantity']);
             }
