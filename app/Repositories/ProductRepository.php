@@ -785,9 +785,9 @@ class ProductRepository implements ProductInterface
             $product->is_verified = 1;
             $product->save();
 
-            return $this->success("Product successfully verified.", $product);
-
             DB::commit();
+            
+            return $this->success("Product successfully verified.", $product);
         } catch (Exception $e)
         {
             DB::rollBack();
