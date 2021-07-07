@@ -16,6 +16,7 @@ use App\Mail\CheckoutProducts;
 use App\Notifications\CheckoutProducts as NotificationsCheckoutProducts;
 use App\ProductCategory;
 use App\ProductImage;
+use App\ProductLike;
 use App\Repositories\PriceRepository;
 use App\Traits\ResponseAPI;
 use Carbon\Carbon;
@@ -788,6 +789,72 @@ class ProductRepository implements ProductInterface
             DB::commit();
             
             return $this->success("Product successfully verified.", $product);
+        } catch (Exception $e)
+        {
+            DB::rollBack();
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function setProductLike(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $inputs = [
+                'id' => $request->id,
+            ];
+            $rules = [
+                'id' => 'required|exists:products,id'
+            ];
+            $validation = Validator::make($inputs, $rules);
+
+            if ($validation->fails()) return $this->error($validation->errors()->all());
+
+            $product = Product::verified($request->id)->first();
+
+            if(!$product) return $this->error('Product not exists.');
+
+            $pl2 = ProductLike::where('product_id',$product->id)->first();
+            $userId = Auth::user()->id;
+            if(!$pl2) {
+                $likes = [];
+                $likes[] = (string) $userId;
+                ProductLike::create([
+                    'users_data'=>$likes,
+                    'product_id'=>$product->id
+                ]);
+            } else {
+                $pl = ProductLike::where('product_id',$product->id)
+                ->where('users_data','like','%"'.$userId.'"%')
+                ->first();
+
+                if($pl) {
+                    $key = null;
+                    $likes = $pl->users_data;
+                    foreach($likes as $k=>$ud) {
+                        if($key === null && $userId == $ud) $key = $k;
+                    }
+                    unset($likes[$key]);
+                    $pl->users_data = $likes;
+                    $pl->save();
+                } else {
+                    if(count($pl2->users_data) > 0) {
+                        $likes = $pl2->users_data;
+                        $likes[] = (string) $userId;
+                        $pl2->users_data = $likes;
+                        $pl2->save();
+                    } else {
+                        $likes[] = (string) $userId;
+                        $pl2->users_data = $likes;
+                        $pl2->save();
+                    }
+                }
+            }
+            DB::commit();
+            
+            return $this->success("Product successfully liked.", [
+                'likes'=>count($likes)
+            ]);
         } catch (Exception $e)
         {
             DB::rollBack();
