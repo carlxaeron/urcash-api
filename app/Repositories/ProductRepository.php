@@ -852,7 +852,7 @@ class ProductRepository implements ProductInterface
             }
             DB::commit();
             
-            return $this->success("Product successfully liked/unliked the Product.", [
+            return $this->success("Successfully liked/unliked the Product.", [
                 'likes'=>count($likes)
             ]);
         } catch (Exception $e)
