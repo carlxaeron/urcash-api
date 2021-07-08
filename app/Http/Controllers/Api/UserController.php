@@ -283,4 +283,9 @@ class UserController extends Controller
     {
         return $this->userInterface->getAdmins();
     }
+
+    public function addToCart(Request $request)
+    {
+        return $this->userInterface->addToCart($request);
+    }
 }

@@ -234,4 +234,6 @@ interface UserInterface
      * @access  public
      */
     public function getAdmins();
+
+    public function addToCart(Request $request);
 }
