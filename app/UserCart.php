@@ -14,4 +14,5 @@ class UserCart extends Model
     {
         return $this->hasOne('App\Product','id','product_id');
     }
+ 
 }
