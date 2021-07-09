@@ -18,10 +18,12 @@ use App\Http\Services\RedService;
 use App\Interfaces\UserInterface;
 use App\Mail\HasTooManyLoginAttempts;
 use App\Mail\VerifyEmail;
+use App\Product;
 use App\PurchaseItem;
 use App\Repositories\ShopRepository;
 use App\Repositories\SupportTicketRepository;
 use App\Traits\ResponseAPI;
+use App\UserCart;
 use Carbon\Carbon;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
@@ -1196,6 +1198,62 @@ class UserRepository implements UserInterface
 
             return $this->success("Admins", array("admins" => $admins));
         }catch(\Exception $e){
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function getCart(Request $request) {
+        try{
+            $user = Auth::user();
+
+            $items = UserCart::where('user_id',$user->id)->get();
+
+            return $this->success('Success fetched the cart.', $items);
+        } catch(\Exception $e){
+            DB::rollback();
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+    
+    public function addToCart(Request $request) {
+        DB::beginTransaction();
+        try{
+            $inputs = [
+                'product_id' => $request->product_id,
+                'quantity' => $request->quantity,
+            ];
+            $rules = [
+                'product_id' => ['required',function($attr,$value,$fail){
+                    if(!Product::find($value)) $fail('Product does not exists.');
+                }],
+                'quantity' => 'required|integer',
+            ];
+            $validation = Validator::make($inputs, $rules);
+
+            if ($validation->fails()) return $this->error($validation->errors()->all());
+
+            $user = Auth::user();
+
+            $cart = UserCart::where('user_id', $user->id)->where('product_id',$request->product_id)->first();
+            if($cart) {
+                if($request->quantity > 0) {
+                    $cart->quantity = /*$cart->quantity +*/ $request->quantity;
+                    $cart->save();
+                } else {
+                    $cart->delete();
+                }
+            } else {
+                UserCart::create(['user_id'=>$user->id,'product_id'=>$request->product_id,'quantity'=>$request->quantity]);
+            }
+
+            $items = UserCart::where('user_id',$user->id)->get();
+
+            DB::commit();
+            
+            return $this->success('Success added to cart.', $items);
+        }
+        catch(\Exception $e){
+            DB::rollback();
             return $this->error($e->getMessage(), $e->getCode());
         }
     }
