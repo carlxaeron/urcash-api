@@ -1221,12 +1221,13 @@ class UserRepository implements UserInterface
             $inputs = [
                 'product_id' => $request->product_id,
                 'quantity' => $request->quantity,
+                'checked' => $request->check,
             ];
             $rules = [
                 'product_id' => ['required',function($attr,$value,$fail){
                     if(!Product::find($value)) $fail('Product does not exists.');
                 }],
-                'quantity' => 'required|integer',
+                'quantity' => 'required|integer' 
             ];
             $validation = Validator::make($inputs, $rules);
 
@@ -1238,6 +1239,7 @@ class UserRepository implements UserInterface
             if($cart) {
                 if($request->quantity > 0) {
                     $cart->quantity = /*$cart->quantity +*/ $request->quantity;
+                    $cart->checked = $request->checked;
                     $cart->save();
                 } else {
                     $cart->delete();
