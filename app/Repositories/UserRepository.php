@@ -1236,8 +1236,12 @@ class UserRepository implements UserInterface
 
             $cart = UserCart::where('user_id', $user->id)->where('product_id',$request->product_id)->first();
             if($cart) {
-                $cart->quantity = $cart->quantity + $request->quantity;
-                $cart->save();
+                if($request->quantity > 0) {
+                    $cart->quantity = $cart->quantity + $request->quantity;
+                    $cart->save();
+                } else {
+                    $cart->delete();
+                }
             } else {
                 UserCart::create(['user_id'=>$user->id,'product_id'=>$request->product_id,'quantity'=>$request->quantity]);
             }
