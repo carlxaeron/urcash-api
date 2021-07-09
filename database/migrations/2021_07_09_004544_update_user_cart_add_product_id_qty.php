@@ -15,8 +15,7 @@ class UpdateUserCartAddProductIdQty extends Migration
     {
         Schema::table('user_carts', function (Blueprint $table) {
             $table->dropColumn('products_data');
-            $table->integer('quantity')->after('user_id')->default(1);
-            $table->integer('checked')->after('quantity')->default(0);
+            $table->integer('quantity')->after('user_id')->default(1); 
             $table->unsignedBigInteger('product_id')->after('user_id');
         });
     }
@@ -31,7 +30,6 @@ class UpdateUserCartAddProductIdQty extends Migration
         Schema::table('user_carts', function (Blueprint $table) {
             $table->dropColumn('product_id');
             $table->dropColumn('quantity');
-            $table->dropColumn('checked');
             $table->longText('products_data')->after('user_id');
         });
     }
