@@ -1202,6 +1202,19 @@ class UserRepository implements UserInterface
         }
     }
 
+    public function getCart(Request $request) {
+        try{
+            $user = Auth::user();
+
+            $items = UserCart::where('user_id',$user->id)->get();
+
+            return $this->success('Success fetched the cart.', $items);
+        } catch(\Exception $e){
+            DB::rollback();
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+    
     public function addToCart(Request $request) {
         DB::beginTransaction();
         try{

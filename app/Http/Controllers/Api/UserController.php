@@ -288,4 +288,9 @@ class UserController extends Controller
     {
         return $this->userInterface->addToCart($request);
     }
+
+    public function getCart(Request $request)
+    {
+        return $this->userInterface->getCart($request);
+    }
 }

@@ -401,7 +401,8 @@ Route::prefix('/v1')->group(function () {
         Route::get('/payment/checker', 'Api\PaymentController@paymentChecker');
 
         // Cart
-        Route::get('/cart', 'Api\UserController@addToCart');
+        Route::post('/cart', 'Api\UserController@addToCart');
+        Route::get('/cart', 'Api\UserController@getCart');
         
         // Admin/Merchant Role
         Route::middleware(['role:administrator,merchant',function($response, $next){
