@@ -129,4 +129,6 @@ interface ProductInterface
     public function verifyProduct(Request $request);
 
     public function setProductLike(Request $request);
+
+    public function getUserProductLike();
 }

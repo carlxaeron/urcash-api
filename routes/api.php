@@ -394,6 +394,7 @@ Route::prefix('/v1')->group(function () {
         Route::delete('/product/image/{id}', 'Api\ProductImageController@destroy');
 
         // Product like
+        Route::get('/product/like/me', 'Api\ProductController@getUserProductLike');
         Route::put('/product/like/{id}', 'Api\ProductController@setProductLike');
 
         // Payment

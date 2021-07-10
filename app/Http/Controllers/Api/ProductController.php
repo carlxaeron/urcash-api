@@ -144,4 +144,8 @@ class ProductController extends Controller
     public function setProductLike(Request $request) {
         return $this->productInterface->setProductLike($request);
     }
+
+    public function getUserProductLike() {
+        return $this->productInterface->getUserProductLike();
+    }
 }

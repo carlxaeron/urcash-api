@@ -820,7 +820,6 @@ class ProductRepository implements ProductInterface
 
             if($pl) {
                 $pl->delete();
-                $pl->save();
             } else {
                 ProductLike::create(['user_id'=>$userId,'product_id'=>$request->id]);
             }
@@ -835,6 +834,17 @@ class ProductRepository implements ProductInterface
         } catch (Exception $e)
         {
             DB::rollBack();
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function getUserProductLike()
+    {
+        try {
+            return $this->success('Success fetched the user product likes.', ProductLike::where('user_id', Auth::user()->id)->get());
+        }
+        catch (Exception $e)
+        {
             return $this->error($e->getMessage(), $e->getCode());
         }
     }
