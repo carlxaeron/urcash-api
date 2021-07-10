@@ -60,7 +60,7 @@ class ProductRepository implements ProductInterface
             if(request()->page) $products = $products->paginate(request()->per_page ?? 10);
             else $products = $products->get();
 
-            return $this->success("All Products", new ResourcesProduct($products));
+            return $this->success($products, new ResourcesProduct($products));
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
@@ -814,46 +814,23 @@ class ProductRepository implements ProductInterface
 
             if(!$product) return $this->error('Product not exists.');
 
-            $pl2 = ProductLike::where('product_id',$product->id)->first();
             $userId = Auth::user()->id;
-            if(!$pl2) {
-                $likes = [];
-                $likes[] = (string) $userId;
-                ProductLike::create([
-                    'users_data'=>$likes,
-                    'product_id'=>$product->id
-                ]);
-            } else {
-                $pl = ProductLike::where('product_id',$product->id)
-                ->where('users_data','like','%"'.$userId.'"%')
-                ->first();
 
-                if($pl) {
-                    $key = null;
-                    $likes = $pl->users_data;
-                    foreach($likes as $k=>$ud) {
-                        if($key === null && $userId == $ud) $key = $k;
-                    }
-                    unset($likes[$key]);
-                    $pl->users_data = $likes;
-                    $pl->save();
-                } else {
-                    if(count($pl2->users_data) > 0) {
-                        $likes = $pl2->users_data;
-                        $likes[] = (string) $userId;
-                        $pl2->users_data = $likes;
-                        $pl2->save();
-                    } else {
-                        $likes[] = (string) $userId;
-                        $pl2->users_data = $likes;
-                        $pl2->save();
-                    }
-                }
+            $pl = ProductLike::where('user_id', $userId)->where('product_id',$request->id)->first();
+
+            if($pl) {
+                $pl->delete();
+                $pl->save();
+            } else {
+                ProductLike::create(['user_id'=>$userId,'product_id'=>$request->id]);
             }
+
+            $likes = ProductLike::where('product_id', $request->id)->count();
+
             DB::commit();
             
             return $this->success("Successfully liked/unliked the Product.", [
-                'likes'=>count($likes)
+                'likes'=>$likes
             ]);
         } catch (Exception $e)
         {

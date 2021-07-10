@@ -25,7 +25,7 @@ class Product extends Model
     ];
 
     protected $appends = [
-        'price','likes'
+        'price'
     ];
 
     public function prices() {
@@ -39,6 +39,9 @@ class Product extends Model
     }
     public function owner() {
         return $this->belongsTo(User::class,'user_id','id');
+    }
+    public function likes() {
+        return $this->hasMany(ProductLike::class, 'product_id', 'id');
     }
 
     public function scopeVerified($query) {
@@ -138,9 +141,9 @@ class Product extends Model
         return $this->prices ? $this->prices->price : 'ERROR';
     }
 
-    public function getLikesAttribute() {
-        $mdl = $this->hasOne('App\ProductLike','product_id','id')->first();
+    // public function getLikesAttribute() {
+    //     $mdl = $this->hasOne('App\ProductLike','product_id','id')->first();
         
-        return $mdl ? count($mdl->users_data) : 0;
-    }
+    //     return $mdl ? count($mdl->users_data) : 0;
+    // }
 }
