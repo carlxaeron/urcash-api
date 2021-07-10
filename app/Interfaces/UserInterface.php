@@ -236,5 +236,8 @@ interface UserInterface
     public function getAdmins();
 
     public function addToCart(Request $request);
+
     public function getCart(Request $request);
+
+    public function deleteCheckedCart();
 }

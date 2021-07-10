@@ -10,6 +10,10 @@ class UserCart extends Model
 
     protected $with = ['product'];
 
+    public function scopeChecked($q){
+        return $q->where('checked',1);
+    }
+
     public function product()
     {
         return $this->hasOne('App\Product','id','product_id');

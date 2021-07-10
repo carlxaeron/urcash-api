@@ -293,4 +293,9 @@ class UserController extends Controller
     {
         return $this->userInterface->getCart($request);
     }
+
+    public function deleteCheckedCart()
+    {
+        return $this->userInterface->deleteCheckedCart();
+    }
 }

@@ -1215,13 +1215,29 @@ class UserRepository implements UserInterface
         }
     }
     
+    public function deleteCheckedCart() {
+        DB::beginTransaction();
+        try{
+            $user = Auth::user();
+
+            UserCart::where('user_id',$user->id)->checked()->delete();
+
+            DB::commit();
+
+            return $this->success('Successfully deleted checked items in the cart.', ['success'=>true]);
+        }
+        catch(\Exception $e){
+            DB::rollback();
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
     public function addToCart(Request $request) {
         DB::beginTransaction();
         try{
             $inputs = [
                 'product_id' => $request->product_id,
                 'quantity' => $request->quantity,
-                'checked' => $request->check,
+                'checked' => $request->checked ? $request->checked : 0,
             ];
             $rules = [
                 'product_id' => ['required',function($attr,$value,$fail){
@@ -1239,7 +1255,7 @@ class UserRepository implements UserInterface
             if($cart) {
                 if($request->quantity > 0) {
                     $cart->quantity = /*$cart->quantity +*/ $request->quantity;
-                    $cart->checked = $request->checked;
+                    $cart->checked = $request->checked ? $request->checked : 0;
                     $cart->save();
                 } else {
                     $cart->delete();

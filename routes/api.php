@@ -404,6 +404,7 @@ Route::prefix('/v1')->group(function () {
         // Cart
         Route::post('/cart', 'Api\UserController@addToCart');
         Route::get('/cart', 'Api\UserController@getCart');
+        Route::delete('/cart', 'Api\UserController@deleteCheckedCart');
         
         // Admin/Merchant Role
         Route::middleware(['role:administrator,merchant',function($response, $next){
