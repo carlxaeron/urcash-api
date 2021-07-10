@@ -23,6 +23,19 @@ class PurchaseItem extends Model
         return $this->belongsTo('App\Product');
     }
 
+    public function scopeFilters($q) {
+        if(request()->date_start) {
+            $q->where(function($q2) {
+                $q2
+                ->whereDate('purchase_items.created_at','>',request()->date_start)
+                ->whereDate('purchase_items.created_at','<',request()->date_end)
+                ;
+            });
+        }
+
+        return $q;
+    }
+
     /**
      * Serialize timestamps as datetime strings without the timezone.
      */
