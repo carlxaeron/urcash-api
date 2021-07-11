@@ -25,7 +25,7 @@ class Product extends Model
     ];
 
     protected $appends = [
-        'price'
+        'price', 'likes'
     ];
 
     public function prices() {
@@ -141,9 +141,9 @@ class Product extends Model
         return $this->prices ? $this->prices->price : 'ERROR';
     }
 
-    // public function getLikesAttribute() {
-    //     $mdl = $this->hasOne('App\ProductLike','product_id','id')->first();
+    public function getLikesAttribute() {
+        $mdl = $this->hasMany('App\ProductLike','product_id','id')->count();
         
-    //     return $mdl ? count($mdl->users_data) : 0;
-    // }
+        return $mdl;
+    }
 }
