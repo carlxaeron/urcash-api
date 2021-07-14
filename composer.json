@@ -12,14 +12,15 @@
         "doctrine/dbal": "2.*",
         "fideloper/proxy": "^4.2",
         "fruitcake/laravel-cors": "^2.0",
-        "guzzlehttp/guzzle": "^6.3",
+        "guzzlehttp/guzzle": "^7.3",
         "intervention/image": "^2.5",
         "laravel/framework": "^7.24",
         "laravel/passport": "^9.3",
         "laravel/telescope": "v3.5.1",
         "laravel/tinker": "^2.0",
         "laravel/ui": "^2.4",
-        "nexmo/client": "^2.0"
+        "nexmo/client": "^2.4",
+        "pusher/pusher-php-server": "^7.0"
     },
     "require-dev": {
         "facade/ignition": "^2.0",
