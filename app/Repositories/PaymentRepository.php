@@ -1,11 +1,13 @@
 <?php
 namespace App\Repositories;
 
+use App\Events\PioCallback;
 use App\Interfaces\PaymentInterface;
 use App\Invoice;
 use App\Price;
 use App\Product;
 use App\Traits\ResponseAPI;
+use App\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -165,6 +167,9 @@ class PaymentRepository implements PaymentInterface
                 $invoice->status = 'unpaid';
                 $invoice->save();
             }
+
+            $user = User::find($invoice->user_id);
+            event(new PioCallback($invoice, $user));
 
             DB::commit();
 

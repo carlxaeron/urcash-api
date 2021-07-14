@@ -27,5 +27,6 @@ class ProcessCallback
     public function handle(PioCallback $event)
     {
         $inv = $event->invoice;
+        $user = $event->user;
     }
 }

@@ -38,8 +38,8 @@ class PioCallback implements ShouldBroadcast
     public function broadcastOn()
     {
         // return new PrivateChannel('channel-name');
-        // return [$this->user->email];
-        return ['my-channel'];
+        return [$this->user->email];
+        // return ['my-channel'];
     }
 
     public function broadcastAs()

@@ -20,7 +20,7 @@
         "laravel/tinker": "^2.0",
         "laravel/ui": "^2.4",
         "nexmo/client": "^2.4",
-        "pusher/pusher-php-server": "^7.0"
+        "pusher/pusher-php-server": "~4.0"
     },
     "require-dev": {
         "facade/ignition": "^2.0",
