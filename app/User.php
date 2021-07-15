@@ -68,6 +68,26 @@ class User extends Authenticatable implements CanResetPasswordContract
         return Carbon::parse($date)->toDateTimeString();
     }
 
+    public function getMerchantLevelAttribute() {
+        if($this->hasRole('administrator')) {
+            return 1;
+        }
+        elseif($this->hasRole('merchant')) {
+            // return $this->status ? 1 : 0;
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
+    public function getProfilePictureAttribute() {
+        return $this->attributes['profile_picture'] ? asset($this->attributes['profile_picture']) : null;
+    }
+
+    public function getDataAttribute ($value) {
+        return unserialize($this->attributes['data']);
+    }
+
      /**
      * Set the user's first_name, middle_name, and last_name values to uppercase. - STANDARD.
      * Set the user's email value to lowercase - STANDARD.
@@ -92,21 +112,10 @@ class User extends Authenticatable implements CanResetPasswordContract
         $this->attributes['password'] = Hash::make($value);
     }
 
-    public function getMerchantLevelAttribute() {
-        if($this->hasRole('administrator')) {
-            return 1;
-        }
-        elseif($this->hasRole('merchant')) {
-            // return $this->status ? 1 : 0;
-            return 1;
-        } else {
-            return 0;
-        }
+    public function setDataAttribute ($value) {
+        $this->attributes['data'] = serialize($value);
     }
 
-    public function getProfilePictureAttribute() {
-        return asset($this->attributes['profile_picture']);
-    }
 
     /**
      * Foreign key relationships

@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Address;
+use App\Events\UserRegistered;
 use App\Role;
 use App\Shop;
 use App\User;
@@ -37,6 +38,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use App\UsersRole;
 use Exception;
+use Illuminate\Contracts\Encryption\DecryptException;
 
 class UserRepository implements UserInterface
 {
@@ -62,7 +64,7 @@ class UserRepository implements UserInterface
             ];
 
             $validation = Validator::make($inputs, $rules, [
-                'email.required' => 'Username is required'
+                'email.required' => 'Username/Email is required'
             ]);
 
             if ($validation->fails()) return $this->error($validation->errors()->all());
@@ -76,6 +78,7 @@ class UserRepository implements UserInterface
 
                     if(!$user) {
                         $_resp = $resp['message'][0];
+                        $_resp['data'] = encrypt($resp['message'][0]);
                         return $this->success(RedService::$ERR_SUCCESS_NOT_YET_REGISTERED,$_resp,202);
                     } else {
                         $token = array(
@@ -446,6 +449,7 @@ class UserRepository implements UserInterface
         }
     }
 
+    protected $regRedData = false;
     public function registerUserV1(Request $request)
     {
         DB::beginTransaction();
@@ -465,6 +469,7 @@ class UserRepository implements UserInterface
                 'barangay' => $request->barangay,
                 'street' => $request->street,
                 'country' => $request->country,
+                'red_ref_code' => $request->red_ref_code,
             ];
             $rules = [
                 'last_name' => 'required',
@@ -494,6 +499,15 @@ class UserRepository implements UserInterface
             if($request->code == 'RED') {
                 unset($rules['password']);
                 unset($rules['repeat_password']);
+
+                $rules['red_data'] = ['required','json', function($attr,$_val,$fail){
+                    $val = json_decode($_val);
+                    try {
+                        $this->regRedData = decrypt($val->data);
+                    } catch (DecryptException $e) {
+                        $fail('Invalid RED Data');
+                    }
+                }];
             }
 
             $validation = Validator::make($inputs, $rules);
@@ -506,6 +520,12 @@ class UserRepository implements UserInterface
                 // Create User
                 $user = User::create($inputs);
                 $user->status = 1;
+                $user->save();
+
+                $user->data = [
+                    'RED_DATA'=>$this->regRedData,
+                    'RED_REF_CODE'=>$inputs['red_ref_code'],
+                ];
                 $user->save();
 
                 // Role
@@ -522,8 +542,6 @@ class UserRepository implements UserInterface
                     'user'=>$user
                 );
 
-                DB::commit();
-
                 // Refresh relationships
                 $user = $user->with(['userRoles.role'])->find($user->id);
 
@@ -531,6 +549,10 @@ class UserRepository implements UserInterface
             } else {
                 // Create User
                 $user = User::create($inputs);
+                $user->data = [
+                    'RED_REF_CODE'=>$inputs['red_ref_code'],
+                ];
+                $user->save();
 
                 // Role
                 UsersRole::create(['user_id'=>$user->id,'role_id'=>Role::where('slug','merchant')->first()->id]);
@@ -548,11 +570,21 @@ class UserRepository implements UserInterface
                 // Send verification email with code
                 Mail::to($user)->send(new VerifyEmail($user, $otp));
                 
-                DB::commit();
-
                 // Refresh relationships
                 $user = $user->with(['userRoles.role'])->find($user->id);
             }
+
+            $evt = event(new UserRegistered($user));
+            if(config('UCC.type') == 'RED' && $evt[0]['status'] == 'error') return $this->error($evt[0]['message'], (int) $evt[0]['code']);
+            elseif(config('UCC.type') == 'RED' && $evt[0]['status'] == 'success') {
+                $_data = $user->data ?? [];
+                $_data['RED_DATA_FROM_API'] = $evt[0]['message'][0];
+                $user->data = $_data;
+                $user->save();
+            }
+
+            DB::commit();
+
             return $this->success("Successfully created!", new ResourcesUser($user));
         } catch (Exception $e) {
             DB::rollback();

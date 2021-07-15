@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use App\Events\PioCallback;
+use App\Events\UserRegistered;
 use App\Listeners\ProcessCallback;
+use App\Listeners\ProcessRegisteredUser;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -22,6 +24,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         PioCallback::class => [
             ProcessCallback::class
+        ],
+        UserRegistered::class => [
+            ProcessRegisteredUser::class
         ]
 
     ];
