@@ -2,6 +2,7 @@
 
 namespace App\Observers;
 
+use App\Events\PaidEvent;
 use App\PurchaseItem;
 
 class PurchaseItemObserver
@@ -25,7 +26,9 @@ class PurchaseItemObserver
      */
     public function updated(PurchaseItem $purchaseItem)
     {
-        //
+        if($purchaseItem->purchase_status == 'paid') {
+            event(new PaidEvent($purchaseItem));
+        }
     }
 
     /**

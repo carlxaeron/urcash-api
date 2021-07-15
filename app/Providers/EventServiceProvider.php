@@ -2,9 +2,13 @@
 
 namespace App\Providers;
 
+use App\Events\PaidEvent;
+use App\Events\PaidInvoiceEvent;
 use App\Events\PioCallback;
 use App\Events\UserRegistered;
 use App\Listeners\ProcessCallback;
+use App\Listeners\ProcessPaidInvoice;
+use App\Listeners\ProcessPaidPurchase;
 use App\Listeners\ProcessRegisteredUser;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -27,8 +31,13 @@ class EventServiceProvider extends ServiceProvider
         ],
         UserRegistered::class => [
             ProcessRegisteredUser::class
+        ],
+        PaidEvent::class => [
+            ProcessPaidPurchase::class
+        ],
+        PaidInvoiceEvent::class => [
+            ProcessPaidInvoice::class
         ]
-
     ];
 
     /**

@@ -2,6 +2,10 @@
 
 namespace App\Http\Services;
 
+use App\Invoice;
+use App\Product;
+use App\Purchase;
+use App\User;
 use Illuminate\Http\Request;
 
 class RedService {
@@ -58,5 +62,44 @@ class RedService {
         curl_close($curl);
 
         return (array) json_decode($response,true);
+    }
+
+    public function purchase($req) {
+        if($req instanceof Invoice) {
+            $transid = $req->id;
+            $uid = $req->user_id;
+            $user = User::find($uid);
+            $acctno = $user->data['RED_DATA_FROM_API']['accountno'] ?? false;
+            $date = urlencode($req->created_at);
+            foreach($req->data['CHECKOUT_ITEMS__items'] as $items) {
+                $prodid = $items['product'];
+                $product = Product::find($prodid);
+                $amt = $product->price;
+                $qty = $items['qty'];
+                $URL = "https://myaccount.redinc.net/b2bapi/?trans=purchase&transid=$transid&u_id=$uid&acctno=$acctno&prod_id=$prodid&qty=$qty&amount=$amt&payment_gateway=pio&purchase_dt=$date&transdate=$date&security_key=".(sha1('**pre**'.$transid.($req->created_at).'**sup**'));;
+                $curl = curl_init();
+
+                curl_setopt_array($curl, array(
+                CURLOPT_URL => $URL,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => '',
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => 'GET',
+                ));
+
+                $response = curl_exec($curl);
+
+                curl_close($curl);
+
+                $resp = (array) json_decode($response,true);
+                if($resp['status'] == 'error') return (array) json_decode($response,true);
+            }
+        }
+        elseif($req instanceof Purchase) {
+
+        }
     }
 }
