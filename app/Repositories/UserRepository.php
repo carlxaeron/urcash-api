@@ -100,6 +100,42 @@ class UserRepository implements UserInterface
         }
     }
 
+    public function linkV1WithRed(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $inputs = [
+                'username' => $request->username,
+                'password' => $request->password,
+            ];
+            $rules = [
+                'username' => 'required',
+                'password' => 'required'
+            ];
+
+            $validation = Validator::make($inputs, $rules);
+
+            if ($validation->fails()) return $this->error($validation->errors()->all());
+
+            $user = Auth::user();
+    
+            $res = app(RedService::class)->link($user, $request);
+
+            if($res['status'] == 'error') return $this->error($res['message'], $res['code']);
+
+            $_data = $user->data;
+            $_data['RED_DATA'] = $res['message'][0];
+            $_user = User::find($user->id);
+            $_user->data = $_data;
+            $_user->save();
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollback();
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
     public function loginV1(Request $request)
     {
         try {

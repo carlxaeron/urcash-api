@@ -59,6 +59,11 @@ class UserController extends Controller
     {
         return $this->userInterface->loginV1($request);
     }
+    public function linkV1WithRed(Request $request)
+    {
+        return $this->userInterface->linkV1WithRed($request);
+    }
+
     public function loginV1WithRed(Request $request)
     {
         return $this->userInterface->loginV1WithRed($request);

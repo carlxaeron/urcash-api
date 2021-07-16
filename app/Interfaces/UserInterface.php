@@ -29,6 +29,8 @@ interface UserInterface
      * @access  public
      */
     public function loginV1WithRed(Request $request);
+    
+    public function linkV1WithRed(Request $request);
 
     public function verifyMerchant(Request $request);
 

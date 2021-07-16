@@ -4,7 +4,7 @@ namespace App\Http\Services;
 
 use App\Invoice;
 use App\Product;
-use App\Purchase;
+use App\PurchaseItem;
 use App\User;
 use Illuminate\Http\Request;
 
@@ -76,7 +76,7 @@ class RedService {
                 $product = Product::find($prodid);
                 $amt = $product->price;
                 $qty = $items['qty'];
-                $URL = "https://myaccount.redinc.net/b2bapi/?trans=purchase&transid=$transid&u_id=$uid&acctno=$acctno&prod_id=$prodid&qty=$qty&amount=$amt&payment_gateway=pio&purchase_dt=$date&transdate=$date&security_key=".(sha1('**pre**'.$transid.($req->created_at).'**sup**'));;
+                $URL = "https://myaccount.redinc.net/b2bapi/?trans=purchase&transid=$transid&u_id=$uid&acctno=$acctno&prod_id=$prodid&qty=$qty&amount=$amt&payment_gateway=pio&purchase_dt=$date&transdate=$date&security_key=".(sha1('**pre**'.$transid.($req->created_at).'**sup**'));
                 $curl = curl_init();
 
                 curl_setopt_array($curl, array(
@@ -98,8 +98,34 @@ class RedService {
                 if($resp['status'] == 'error') return (array) json_decode($response,true);
             }
         }
-        elseif($req instanceof Purchase) {
+        elseif($req instanceof PurchaseItem) {
 
         }
+    }
+
+    public function link(User $user, Request $request)
+    {
+        $date = date('Y-m-d H:i:s');
+        $transid = $user->id;
+        $URL = "https://myaccount.redinc.net/b2bapi/?trans=link&transid=$transid&u_id=$transid&redusername=".$request->username."&redpassword=".$request->password."&transdate=".urlencode($date)."&security_key=".(sha1('**pre**'.$transid.($date).'**sup**'));
+
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+        CURLOPT_URL => $URL,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => '',
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => 'GET',
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+        
+        return (array) json_decode($response,true);
     }
 }

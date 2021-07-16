@@ -344,6 +344,8 @@ Route::prefix('/v1')->group(function () {
 
     // Login
     Route::post('/login', [App\Http\Controllers\Api\UserController::class, 'loginV1']);
+
+    // RED
     Route::post('/login-with-red', [App\Http\Controllers\Api\UserController::class, 'loginV1WithRed']);
 
     // Validate OTP on email
@@ -374,6 +376,8 @@ Route::prefix('/v1')->group(function () {
     
     // Requires TOKEN
     Route::middleware('auth:api')->group(function () {
+        // RED
+        Route::post('/link-with-red', [App\Http\Controllers\Api\UserController::class, 'linkV1WithRed']);
 
         // User - Product
         Route::get('/products/me', 'Api\ProductController@myProducts');
