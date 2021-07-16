@@ -69,6 +69,11 @@ class UserController extends Controller
         return $this->userInterface->getInfoWithRed();
     }
 
+    public function getLinkedWithRed()
+    {
+        return $this->userInterface->getLinkedWithRed();
+    }
+
     public function loginV1WithRed(Request $request)
     {
         return $this->userInterface->loginV1WithRed($request);

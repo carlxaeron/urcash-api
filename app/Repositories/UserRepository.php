@@ -96,6 +96,17 @@ class UserRepository implements UserInterface
         }
     }
 
+    public function getLinkedWithRed()
+    {
+        $user = Auth::user();
+
+        $res = app(RedService::class)->getAccounts($user);
+
+        if($res['status'] == 'error') return $this->error($res['message']);
+
+        return $this->success("Successfully fetched the user linked accounts.", $res['message']);
+    }
+
     public function getInfoWithRed()
     {
         $user = Auth::user();
