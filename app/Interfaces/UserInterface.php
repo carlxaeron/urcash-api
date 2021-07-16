@@ -2,6 +2,7 @@
 
 namespace App\Interfaces;
 
+use App\User;
 use Illuminate\Http\Request;
 
 interface UserInterface
@@ -29,8 +30,10 @@ interface UserInterface
      * @access  public
      */
     public function loginV1WithRed(Request $request);
-    
+
     public function linkV1WithRed(Request $request);
+
+    public function getInfoWithRed();
 
     public function verifyMerchant(Request $request);
 

@@ -100,6 +100,17 @@ class UserRepository implements UserInterface
         }
     }
 
+    public function getInfoWithRed()
+    {
+        $user = Auth::user();
+
+        $res = app(RedService::class)->getInfo($user);
+
+        if($res['status'] == 'error') return $this->error($res['message']);
+
+        return $this->success("Successfully fetched the user currency and points", $res['message']);
+    }
+
     public function linkV1WithRed(Request $request)
     {
         DB::beginTransaction();
