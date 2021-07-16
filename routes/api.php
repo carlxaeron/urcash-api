@@ -378,7 +378,7 @@ Route::prefix('/v1')->group(function () {
     Route::middleware('auth:api')->group(function () {
         // RED
         Route::post('/link-with-red', [App\Http\Controllers\Api\UserController::class, 'linkV1WithRed']);
-        Route::post('/info-with-red', [App\Http\Controllers\Api\UserController::class, 'getInfoWithRed']);
+        Route::get('/info-with-red', [App\Http\Controllers\Api\UserController::class, 'getInfoWithRed']);
 
         // User - Product
         Route::get('/products/me', 'Api\ProductController@myProducts');
