@@ -130,6 +130,8 @@ class UserRepository implements UserInterface
             $_user->save();
 
             DB::commit();
+
+            return $this->success('Successfully linked your account on RED account.', $_user);
         } catch (Exception $e) {
             DB::rollback();
             return $this->error($e->getMessage(), $e->getCode());
