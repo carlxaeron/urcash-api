@@ -54,6 +54,15 @@ class User extends Authenticatable implements CanResetPasswordContract
         'merchant_level'
     ];
 
+    public function scopeRedLogin($q, $user)
+    {
+        return $q->orWhere(function($qq) use($user){
+            return $qq->where('data','like','%"RED_DATA_FROM_API"%')->where('data','like','%"username";s:'.strlen($user).':"'.$user.'";%');
+        })->orWhere(function($qq) use($user){
+            return $qq->where('data','like','%"RED_DATA"%')->where('data','like','%"username";s:'.strlen($user).':"'.$user.'";%');
+        });
+    }
+
     /**
      * Serialize timestamps as datetime strings without the timezone.
      */

@@ -106,9 +106,9 @@ class RedService {
     public function link(User $user, Request $request)
     {
         $date = date('Y-m-d H:i:s');
-        $transid = $user->id;
-        $URL = "https://myaccount.redinc.net/b2bapi/?trans=link&transid=$transid&u_id=$transid&redusername=".$request->username."&redpassword=".$request->password."&transdate=".urlencode($date)."&security_key=".(sha1('**pre**'.$transid.($date).'**sup**'));
-
+        $userid = $user->id;
+        $transid = time();
+        $URL = "https://myaccount.redinc.net/b2bapi/?trans=link&transid=$transid&u_id=$userid&redusername=".$request->username."&redpassword=".$request->password."&transdate=".urlencode($date)."&security_key=".(sha1('**pre**'.$transid.($date).'**sup**'));
         $curl = curl_init();
 
         curl_setopt_array($curl, array(

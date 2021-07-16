@@ -69,28 +69,24 @@ class UserRepository implements UserInterface
 
             if ($validation->fails()) return $this->error($validation->errors()->all());
             else {
-                $resp = app(RedService::class)->login($request);
-                if($resp['status'] == 'error') {
-                    return $this->error($resp['message'],$resp['code']);
-                }
-                else if($resp['status'] == 'success') {
-                    $user = User::where('email', $resp['message'][0]['email'])->first();
+                $red = User::redLogin($request->email)->first();
 
-                    if(!$user) {
-                        $_resp = $resp['message'][0];
-                        $_resp['data'] = encrypt($resp['message'][0]);
-                        return $this->success(RedService::$ERR_SUCCESS_NOT_YET_REGISTERED,$_resp,202);
-                    } else {
-                        $token = array(
-                            'token' => $user->createToken('Auth Token')->accessToken,
-                            'user'=>$user
-                        );
-                        
-                        return $this->success("Login success", $token);
-                    }
+                if(!$red) return $this->error('No RED Account linked yet. Please create account first or login your existing account then link your RED Account.');
+
+                $request->username = $request->email;
+
+                $resp = app(RedService::class)->link($red, $request);
+
+                if($resp['status'] == 'error' && $resp['message'] == 'Username '.$request->username.' already linked to other B2B ID') {
+                    $token = array(
+                        'token' => $red->createToken('Auth Token')->accessToken,
+                        'user'=>$red
+                    );
+
+                    return $this->success("Login success", $token);
                 }
                 else {
-                    return $this->error('Unknown Error. Please try again.');
+                    return $this->error($resp['message'], $resp['code']);
                 }
             }
             
