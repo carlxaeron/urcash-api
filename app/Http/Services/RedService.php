@@ -69,7 +69,7 @@ class RedService {
             $transid = $req->id;
             $uid = $req->user_id;
             $user = User::find($uid);
-            $acctno = $user->data['RED_DATA_FROM_API']['accountno'] ?? false;
+            $acctno = $user->data['RED_DATA_FROM_API']['accountno'] ?? $user->data['RED_DATA']['accountno'] ?? false;
             $date = urlencode($req->created_at);
             foreach($req->data['CHECKOUT_ITEMS__items'] as $items) {
                 $prodid = $items['product'];
@@ -125,7 +125,7 @@ class RedService {
         $response = curl_exec($curl);
 
         curl_close($curl);
-        
+
         return (array) json_decode($response,true);
     }
 }
