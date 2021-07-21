@@ -60,7 +60,7 @@ class ProductRepository implements ProductInterface
             if(request()->page) $products = $products->paginate(request()->per_page ?? 10);
             else $products = $products->get();
 
-            return $this->success($products, new ResourcesProduct($products));
+            return $this->success('Success fetched the products', new ResourcesProduct($products));
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
