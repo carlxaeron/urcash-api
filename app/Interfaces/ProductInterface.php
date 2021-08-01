@@ -128,6 +128,8 @@ interface ProductInterface
 
     public function verifyProduct(Request $request);
 
+    public function rejectProduct(Request $request);
+
     public function setProductLike(Request $request);
 
     public function getUserProductLike();

@@ -140,6 +140,10 @@ class ProductController extends Controller
     public function verifyProduct(Request $request) {
         return $this->productInterface->verifyProduct($request);
     }
+
+    public function rejectProduct(Request $request) {
+        return $this->productInterface->rejectProduct($request);
+    }
     
     public function setProductLike(Request $request) {
         return $this->productInterface->setProductLike($request);

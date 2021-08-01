@@ -43,6 +43,10 @@ class Product extends Model
     public function likes() {
         return $this->hasMany(ProductLike::class, 'product_id', 'id');
     }
+    public function remarks()
+    {
+        return $this->hasMany('App\Notify', 'notifiable');
+    }
 
     public function scopeVerified($query) {
         return $query->where('is_verified',1);

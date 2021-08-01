@@ -14,6 +14,7 @@ use App\VerificationRequest;
 use App\Interfaces\ProductInterface;
 use App\Mail\CheckoutProducts;
 use App\Notifications\CheckoutProducts as NotificationsCheckoutProducts;
+use App\Notify;
 use App\ProductCategory;
 use App\ProductImage;
 use App\ProductLike;
@@ -655,31 +656,6 @@ class ProductRepository implements ProductInterface
                 $product = $product->with(['categories.category'])->find($product->id);
             }
 
-            //     $product = Product::create([
-            //         'sku' => $request->sku,
-            //         'name' => $request->name,
-            //         // 'variant' => $request->variant,
-            //         'is_verified' => False,
-            //     ]);
-            //     $user = Auth::user();
-            //     $request->product_id = $product->id;
-            //     $price_repository = new PriceRepository();
-            //     $price_repository->createPrice($request);
-
-            //     $request->type = 'product_verification';
-            //     $request->user_id = $user->id;
-            //     $verification_request_repository = new VerificationRequestRepository();
-            //     $verification_request = $verification_request_repository->createVerificationRequest($request);
-
-            //     if ($verification_request->getData()->statusCode == 500) {
-            //         return $this->error($verification_request->getData()->message);
-            //     }
-
-            //     return $this->success("Product created", array(
-            //         "product" => $product,
-            //         "verification_request" => $verification_request->getData()->results
-            //     ));
-            // }
             return $this->success("Product created", array(
                 "product" => $product,
                 // "verification_request" => $verification_request->getData()->results
@@ -789,6 +765,43 @@ class ProductRepository implements ProductInterface
             DB::commit();
             
             return $this->success("Product successfully verified.", $product);
+        } catch (Exception $e)
+        {
+            DB::rollBack();
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function rejectProduct(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $inputs = [
+                'id' => $request->id,
+                'remarks' => $request->remarks,
+            ];
+            $rules = [
+                'id' => 'required|exists:products,id',
+                'remarks' => 'required',
+            ];
+            $validation = Validator::make($inputs, $rules);
+
+            if ($validation->fails()) return $this->error($validation->errors()->all());
+
+            $product = Product::find($request->id);
+
+            $product->is_verified = 0;
+            $product->save();
+
+            $notify = app(Notify::class)->notifiable()->associate($product);
+            $notify->message = $inputs['remarks'];
+            $notify->type = Notify::$PRODUCT_REMARKS;
+            $notify->user_id = Auth::user()->id;
+            $notify->save();
+
+            DB::commit();
+            
+            return $this->success("Product successfully rejected.", $product);
         } catch (Exception $e)
         {
             DB::rollBack();
