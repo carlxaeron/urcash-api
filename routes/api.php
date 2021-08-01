@@ -441,6 +441,7 @@ Route::prefix('/v1')->group(function () {
             // Route::put('/user/verify-merchant/{id}','Api\UserController@verifyMerchant');
             // Verify Product
             Route::put('/product/verify/{id}', 'Api\ProductController@verifyProduct');
+            // Reject Product
             Route::put('/product/reject/{id}', 'Api\ProductController@rejectProduct');
         }); 
     });

@@ -45,7 +45,7 @@ class Product extends Model
     }
     public function remarks()
     {
-        return $this->hasMany('App\Notify', 'notifiable');
+        return $this->morphMany('App\Notify', 'notifiable');
     }
 
     public function scopeVerified($query) {

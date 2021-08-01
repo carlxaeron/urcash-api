@@ -52,7 +52,25 @@ class ProductRepository implements ProductInterface
     public function getAllProductsV1()
     {
         try {
-            $products = Product::with('owner')->verified()->filters();
+            $user = Auth::user();
+
+            $products = app(Product::class);
+
+            $with = ['owner'];
+
+            if($user) {
+                $with[] = 'remarks';
+            } else {
+                $products = $products->verified();
+            }
+            // if($user && $user->hasRole('administrator')) {
+            //     $with[] = 'remarks';
+            // }
+            // elseif($user && $user->hasRole('merchant')) {
+            //     $with[] = 'remarks';
+            // }
+
+            $products = $products->with($with)->filters();
 
             if ($products->count() < 1) {
                 return $this->error("Products not found", 404);
