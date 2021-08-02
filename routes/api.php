@@ -422,7 +422,7 @@ Route::prefix('/v1')->group(function () {
             Route::put('/product/{id}', 'Api\ProductController@updateV1');
             Route::delete('/product/{id}', 'Api\ProductController@deleteV1');
             Route::post('/product', 'Api\ProductController@createV1');
-            Route::get('/products/rejected', 'Api\ProductController@indexV1');
+            Route::get('/products/rejected', 'Api\ProductController@getRejectedProducts');
             Route::put('/product/merchant/resubmit', 'Api\ProductController@resubmitProduct');
             // Order
             Route::get('/orders/me','Api\OrderController@getAllUserOrders');

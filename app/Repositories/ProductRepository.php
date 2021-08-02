@@ -58,17 +58,32 @@ class ProductRepository implements ProductInterface
 
             $with = ['owner'];
 
-            if($user) {
-                $with[] = 'remarks';
-            } else {
-                $products = $products->verified();
+            $products = $products->verified();
+
+            $products = $products->with($with)->filters();
+
+            if ($products->count() < 1) {
+                return $this->error("Products not found", 404);
             }
-            // if($user && $user->hasRole('administrator')) {
-            //     $with[] = 'remarks';
-            // }
-            // elseif($user && $user->hasRole('merchant')) {
-            //     $with[] = 'remarks';
-            // }
+
+            if(request()->page) $products = $products->paginate(request()->per_page ?? 10);
+            else $products = $products->get();
+
+            return $this->success('Success fetched the products', new ResourcesProduct($products));
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function getRejectedProducts()
+    {
+        try {
+            $user = Auth::user();
+
+            $products = app(Product::class)->rejected()->where('user_id',$user->id);
+
+            $with = ['owner'];
+            $with[] = 'remarks';
 
             $products = $products->with($with)->filters();
 
@@ -785,7 +800,13 @@ class ProductRepository implements ProductInterface
 
             if ($validation->fails()) return $this->error($validation->errors()->all());
 
-            $product = Product::unverified($request->id)->first();
+            $product = Product::where(function($q) use($request) {
+                return $q->unverified($request->id)
+                ->orWhere(function($q2) use($q){
+                    return $q2->resubmitted();
+                });
+
+            })->first();
 
             if(!$product) return $this->error('Product not exists or its already verified.');
 
@@ -811,7 +832,7 @@ class ProductRepository implements ProductInterface
                 'remarks' => $request->remarks,
             ];
             $rules = [
-                'id' => 'required|exists:products,id',
+                'id' => ['required','exists:products,id'],
                 'remarks' => 'required',
             ];
             $validation = Validator::make($inputs, $rules);
@@ -820,7 +841,7 @@ class ProductRepository implements ProductInterface
 
             $product = Product::find($request->id);
 
-            $product->is_verified = 0;
+            $product->is_verified = 2;
             $product->save();
 
             $notify = app(Notify::class)->notifiable()->associate($product);

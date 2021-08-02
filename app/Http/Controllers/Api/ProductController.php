@@ -28,6 +28,10 @@ class ProductController extends Controller
         return $this->productInterface->getAllProductsV1();
     }
 
+    public function getRejectedProducts() {
+        return $this->productInterface->getRejectedProducts();
+    }
+
     public function allProducts() {
         return $this->productInterface->getAllProductsAdmin();
     }
