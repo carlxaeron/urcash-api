@@ -651,9 +651,15 @@ class ProductRepository implements ProductInterface
                     }
                 }],
             ];
+
             $validation = Validator::make($inputs, $rules, [
                 'image.max' => 'Maximum upload file reached.'
             ]);
+
+            if(Auth::user()->hasRole('administrator')) {
+                $inputs['company_price'] = $request->company_price;
+                $rules['company_price'] = 'required|numeric|min:0';
+            }
 
             if ($validation->fails()) return $this->error($validation->errors()->all());
 
