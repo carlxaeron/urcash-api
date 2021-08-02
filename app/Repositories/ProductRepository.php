@@ -556,6 +556,12 @@ class ProductRepository implements ProductInterface
                 // 'image' => 'required|max:3|array',
                 'description' => 'required',
             ];
+
+            if(Auth::user()->hasRole('administrator')) {
+                $inputs['company_price'] = $request->company_price;
+                $rules['company_price'] = 'required|numeric|min:0';
+            }
+
             $validation = Validator::make($inputs, $rules);
 
             if ($validation->fails()) return $this->error($validation->errors()->all());
