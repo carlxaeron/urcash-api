@@ -422,6 +422,8 @@ Route::prefix('/v1')->group(function () {
             Route::put('/product/{id}', 'Api\ProductController@updateV1');
             Route::delete('/product/{id}', 'Api\ProductController@deleteV1');
             Route::post('/product', 'Api\ProductController@createV1');
+            Route::get('/products/rejected', 'Api\ProductController@indexV1');
+            Route::put('/product/merchant/resubmit', 'Api\ProductController@resubmitProduct');
             // Order
             Route::get('/orders/me','Api\OrderController@getAllUserOrders');
         });
@@ -430,6 +432,7 @@ Route::prefix('/v1')->group(function () {
         Route::middleware(['role:administrator'])->group(function () {
             // products
             Route::get('/products/all', 'Api\ProductController@allProducts');
+            Route::get('/products/resubmitted', 'Api\ProductController@getResubmittedProducts');
             // Categories
             Route::post('/category', [App\Http\Controllers\Api\CategoryController::class, 'store']); 
             Route::put('/category/{id}', [App\Http\Controllers\Api\CategoryController::class, 'update']);

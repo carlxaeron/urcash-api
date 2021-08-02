@@ -144,6 +144,14 @@ class ProductController extends Controller
     public function rejectProduct(Request $request) {
         return $this->productInterface->rejectProduct($request);
     }
+
+    public function getResubmittedProducts() {
+        return $this->productInterface->getResubmittedProducts();
+    }
+
+    public function resubmitProduct(Request $request) {
+        return $this->productInterface->resubmitProduct($request);
+    }
     
     public function setProductLike(Request $request) {
         return $this->productInterface->setProductLike($request);

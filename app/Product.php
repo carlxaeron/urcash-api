@@ -54,6 +54,12 @@ class Product extends Model
     public function scopeUnverified($query) {
         return $query->where('is_verified',0);
     }
+    public function scopeRejected($q) {
+        return $q->where('is_verified',2);
+    }
+    public function scopeResubmitted($q) {
+        return $q->where('is_verified',3);
+    }
     public function scopeRelated($query, $limit) {
         return $query->inRandomOrder()->limit($limit);
     }

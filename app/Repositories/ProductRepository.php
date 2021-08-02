@@ -839,6 +839,68 @@ class ProductRepository implements ProductInterface
         }
     }
 
+    public function getResubmittedProducts()
+    {
+        try {
+            $user = Auth::user();
+
+            $products = app(Product::class)->resubmitted();
+
+            $with = ['owner'];
+            $with[] = 'remarks';
+
+            $products = $products->with($with)->filters();
+
+            if ($products->count() < 1) {
+                return $this->error("Products not found", 404);
+            }
+
+            if(request()->page) $products = $products->paginate(request()->per_page ?? 10);
+            else $products = $products->get();
+
+            return $this->success('Success fetched the resubmitted products', new ResourcesProduct($products));
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+    public function resubmitProduct(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $inputs = [
+                'id' => $request->id,
+                'remarks' => $request->remarks,
+            ];
+            $rules = [
+                'id' => ['required','exists:products,id',function($attr,$val,$fail){
+                    if(!Product::where('id',$val)->rejected()->first()) $fail('Product is not rejected.');
+                }],
+                'remarks' => 'required',
+            ];
+            $validation = Validator::make($inputs, $rules);
+
+            if ($validation->fails()) return $this->error($validation->errors()->all());
+
+            $product = Product::find($request->id);
+            $product->is_verified = 3;
+            $product->save();
+
+            $notify = app(Notify::class)->notifiable()->associate($product);
+            $notify->message = $inputs['remarks'];
+            $notify->type = Notify::$PRODUCT_REMARKS;
+            $notify->user_id = Auth::user()->id;
+            $notify->save();
+
+            DB::commit();
+            
+            return $this->success("Product successfully resubmit for verification.", $product);
+        } catch (Exception $e)
+        {
+            DB::rollBack();
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
     public function setProductLike(Request $request)
     {
         DB::beginTransaction();

@@ -130,6 +130,10 @@ interface ProductInterface
 
     public function rejectProduct(Request $request);
 
+    public function getResubmittedProducts();
+    
+    public function resubmitProduct(Request $request);
+
     public function setProductLike(Request $request);
 
     public function getUserProductLike();
