@@ -572,10 +572,10 @@ class ProductRepository implements ProductInterface
                 'description' => 'required',
             ];
 
-            // if(Auth::user()->hasRole('administrator')) {
+            if(config('UCC.type') == 'RED') {
                 $inputs['company_price'] = $request->company_price;
                 $rules['company_price'] = 'required|numeric|min:0';
-            // }
+            }
 
             $validation = Validator::make($inputs, $rules);
 
@@ -671,10 +671,10 @@ class ProductRepository implements ProductInterface
                 'image.max' => 'Maximum upload file reached.'
             ]);
 
-            // if(Auth::user()->hasRole('administrator')) {
+            if(config('UCC.type') == 'RED') {
                 $inputs['company_price'] = $request->company_price;
                 $rules['company_price'] = 'required|numeric|min:0';
-            // }
+            }
 
             if ($validation->fails()) return $this->error($validation->errors()->all());
 
