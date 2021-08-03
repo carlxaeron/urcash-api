@@ -794,8 +794,14 @@ class ProductRepository implements ProductInterface
                 'id' => $request->id,
             ];
             $rules = [
-                'id' => 'required|exists:products,id'
+                'id' => 'required|exists:products,id',
             ];
+
+            if(config('UCC.type') == 'RED') {
+                $inputs['company_price'] = $request->company_price;
+                $rules['company_price'] = 'required|numeric|min:0';
+            }
+
             $validation = Validator::make($inputs, $rules);
 
             if ($validation->fails()) return $this->error($validation->errors()->all());
