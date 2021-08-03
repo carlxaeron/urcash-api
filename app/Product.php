@@ -21,7 +21,7 @@ class Product extends Model
     ];
 
     protected $with = [
-        'prices','images','categories.category','owner'
+        'prices','images','categories.category','owner','remarks'
     ];
 
     protected $appends = [
