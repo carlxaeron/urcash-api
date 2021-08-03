@@ -25,7 +25,7 @@ class Product extends Model
     ];
 
     protected $appends = [
-        'price', 'likes'
+        'price', 'likes', 'status'
     ];
 
     public function prices() {
@@ -155,5 +155,22 @@ class Product extends Model
         $mdl = $this->hasMany('App\ProductLike','product_id','id')->count();
         
         return $mdl;
+    }
+
+    public function getStatusAttribute() {
+        if($this->attributes['is_verified'] == 3) {
+            $status = 'resubmit';
+        }
+        if($this->attributes['is_verified'] == 2) {
+            $status = 'rejected';
+        }
+        if($this->attributes['is_verified'] == 1) {
+            $status = 'verified';
+        }
+        if($this->attributes['is_verified'] == 0) {
+            $status = 'pending';
+        }
+
+        return $status;
     }
 }

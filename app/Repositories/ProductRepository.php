@@ -56,7 +56,7 @@ class ProductRepository implements ProductInterface
 
             $products = app(Product::class);
 
-            $with = ['owner'];
+            $with = ['owner','remarks'];
 
             $products = $products->verified();
 
