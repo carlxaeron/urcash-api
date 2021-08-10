@@ -69,7 +69,7 @@ class RedService {
             $transid = time();
             $uid = $req->user_id;
             $user = User::find($uid);
-            $acctno = $user->data['RED_DATA_FROM_API']['accountno'] ?? $user->data['RED_DATA']['accountno'] ?? false;
+            $acctno = $user->data['requests']['red_account'] ?? $user->data['RED_DATA_FROM_API']['accountno'] ?? $user->data['RED_DATA']['accountno'] ?? false;
             $date = urlencode($req->created_at);
             foreach($req->data['CHECKOUT_ITEMS__items'] as $items) {
                 $prodid = $items['product'];

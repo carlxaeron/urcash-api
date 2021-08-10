@@ -275,8 +275,15 @@ class ProductRepository implements ProductInterface
                     if(!Product::find($value)) $fail('Product ID #'.$value.' not exists.');
                 }],
             ];
+
+            if(config('UCC.type') == 'RED') {
+                $inputs['red_account'] = request()->red_account;
+                $rules['red_account'] = 'required';
+            }
+
             $validation = Validator::make($inputs, $rules);
 
+            
             if ($validation->fails()) return $this->error($validation->errors()->all());
             $user = Auth::user();
             $subtotal = 0;
@@ -290,7 +297,9 @@ class ProductRepository implements ProductInterface
                     'price'=>$product->prices->price,
                     'batch_code'=>$batchCode,
                     'note'=>$prod['note'],
-                    'data'=>[]
+                    'data'=>[
+                        'requests'=>request()->all()
+                    ]
                 ]);
                 $p->status = 'processing';
                 $p->purchase_status = $request->purchase_status ?? 'unpaid';
@@ -303,7 +312,6 @@ class ProductRepository implements ProductInterface
             $user->notify(new NotificationsCheckoutProducts($user, $purchase));
             
             DB::commit();
-
             return $this->success("Transaction complete", array(
                 "products_purchased" => $request->products,
                 "subtotal" => $subtotal,
