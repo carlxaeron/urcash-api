@@ -123,10 +123,14 @@ class OrderRepository implements OrderInterface
                 // }])->where('product_id','!=',null);
             $orders = PurchaseItem::
             select('purchase_items.*')
-            ->
-            leftJoin('products as products_table','purchase_items.product_id', 'products_table.id')
-            ->filters()
-            ->where('products_table.user_id',Auth::user()->id)
+            ->filters();
+
+            if(!Auth::user()->hasRole('administrator')) {
+                $orders = $orders
+                ->leftJoin('products as products_table','purchase_items.product_id', 'products_table.id')
+                ->where('products_table.user_id',Auth::user()->id);
+            }
+
             ;
             $orders = $request->page ? $orders->paginate($request->per_page ? $request->per_page : 10) : $orders->get();
 
