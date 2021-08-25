@@ -144,7 +144,12 @@ class OrderRepository implements OrderInterface
     public function getAllOrders(Request $request)
     {
         try {
-            $orders = $request->page ? PurchaseItem::paginate(10) : PurchaseItem::all();
+            $orders = PurchaseItem::
+            select('purchase_items.*')
+            ->with(['buyer'])
+            ->filters();
+
+            $orders = $request->page ? PurchaseItem::paginate($request->per_page ? $request->per_page : 10) : $orders->get();
 
             return $this->success('Successfully retrieved all the orders.', new PurchaseItems($orders));
         } catch (\Exception $e) {
