@@ -905,20 +905,48 @@ class ProductRepository implements ProductInterface
             $inputs = [
                 'id' => $request->id,
                 'remarks' => $request->remarks,
+                'price' => $request->price,
+                'name' => $request->name,
+                'description' => $request->description,
             ];
             $rules = [
                 'id' => ['required','exists:products,id',function($attr,$val,$fail){
                     if(!Product::where('id',$val)->rejected()->first()) $fail('Product is not rejected.');
                 }],
                 'remarks' => 'required',
+                'price' => 'sometimes|numeric|min:0',
+                'name' => 'sometimes',
+                // 'image' => 'required|max:3|array',
+                'description' => 'sometimes',
             ];
+
+            if(config('UCC.type') == 'RED') {
+                $inputs['company_price'] = $request->company_price;
+                $rules['company_price'] = 'sometimes|numeric|min:0';
+            }
+
             $validation = Validator::make($inputs, $rules);
 
             if ($validation->fails()) return $this->error($validation->errors()->all());
 
             $product = Product::find($request->id);
             $product->is_verified = 3;
+
+            if(isset($inputs['company_price']) && $inputs['company_price']) {
+                $product->company_price = $request->company_price;
+            }
+            if(isset($inputs['name']) && $inputs['name']) {
+                $product->name = $request->name;
+            }
+            if(isset($inputs['description']) && $inputs['description']) {
+                $product->description = $request->description;
+            }
             $product->save();
+
+            if(isset($inputs['price']) && $inputs['price']) {
+                $_price = Price::where('product_id', $request->id);
+                $_price->price = $request->price;
+            }
 
             $notify = app(Notify::class)->notifiable()->associate($product);
             $notify->message = $inputs['remarks'];
