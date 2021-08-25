@@ -23,6 +23,10 @@ class PurchaseItem extends Model
         return $this->belongsTo('App\Product');
     }
 
+    public function buyer() {
+        return $this->belongsTo('App\User', 'user_id');
+    }
+
     public function scopeFilters($q) {
         if(request()->date_start) {
             $q->where(function($q2) {

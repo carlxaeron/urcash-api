@@ -123,6 +123,7 @@ class OrderRepository implements OrderInterface
                 // }])->where('product_id','!=',null);
             $orders = PurchaseItem::
             select('purchase_items.*')
+            ->with(['buyer'])
             ->filters();
 
             if(!Auth::user()->hasRole('administrator')) {
