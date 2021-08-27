@@ -576,7 +576,7 @@ class ProductRepository implements ProductInterface
             $rules = [
                 'price' => 'required|numeric|min:0',
                 'name' => 'required',
-                // 'image' => 'required|max:3|array',
+                'image' => 'sometimes|max:3|array',
                 'description' => 'required',
             ];
 
@@ -594,6 +594,25 @@ class ProductRepository implements ProductInterface
             if ($request->has('price')) {
                 $price_repository = new PriceRepository();
                 $get_price = $price_repository->updatePriceV1($request, $get_price->id)->getData()->results;
+            }
+
+            if($request->image) {
+                if($request->image && $request->image_id) {
+                    foreach($request->image as $_key=>$img) {
+                        $_img = ProductImage::where([
+                            'id'=>$request->image_id[$_key],
+                            'product_id'=>$id,
+                        ])->first();
+                        if($_img) {
+                            $_img->filename = $img->store('image');
+                            $_img->save();
+                        }
+                    };
+                } else {
+                    foreach($request->image as $img) {
+                        ProductImage::create(['filename'=>$img->store('image'),'product_id'=>$id]);
+                    }
+                }
             }
 
             $product->update($inputs);
