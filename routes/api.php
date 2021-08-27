@@ -419,6 +419,7 @@ Route::prefix('/v1')->group(function () {
         }])->group(function () {
 
             // Product
+            Route::post('/product/{id}', 'Api\ProductController@updateV1');
             Route::put('/product/{id}', 'Api\ProductController@updateV1');
             Route::delete('/product/{id}', 'Api\ProductController@deleteV1');
             Route::post('/product', 'Api\ProductController@createV1');
