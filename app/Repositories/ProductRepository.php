@@ -597,8 +597,8 @@ class ProductRepository implements ProductInterface
             }
 
             if($request->image) {
-                if($request->image && $request->image_id) {
-                    foreach($request->image as $_key=>$img) {
+                foreach($request->image as $_key=>$img) {
+                    if($request->image_id[$_key] != false) {
                         $_img = ProductImage::where([
                             'id'=>$request->image_id[$_key],
                             'product_id'=>$id,
@@ -607,9 +607,7 @@ class ProductRepository implements ProductInterface
                             $_img->filename = $img->store('image');
                             $_img->save();
                         }
-                    };
-                } else {
-                    foreach($request->image as $img) {
+                    } else {
                         ProductImage::create(['filename'=>$img->store('image'),'product_id'=>$id]);
                     }
                 }
@@ -969,22 +967,20 @@ class ProductRepository implements ProductInterface
             }
 
             if($request->image) {
-                if($request->image && $request->image_id) {
-                    foreach($request->image as $_key=>$img) {
-                        $_img = ProductImage::where([
-                            'id'=>$request->image_id[$_key],
-                            'product_id'=>$request->id,
-                        ])->first();
-                        if($_img) {
-                            $_img->filename = $img->store('image');
-                            $_img->save();
-                        }
-                    };
-                } else {
-                    foreach($request->image as $img) {
+                foreach($request->image as $_key=>$img) {
+                    if($request->image_id[$_key] != false) {
+                            $_img = ProductImage::where([
+                                'id'=>$request->image_id[$_key],
+                                'product_id'=>$request->id,
+                            ])->first();
+                            if($_img) {
+                                $_img->filename = $img->store('image');
+                                $_img->save();
+                            }
+                    } else {
                         ProductImage::create(['filename'=>$img->store('image'),'product_id'=>$request->id]);
                     }
-                }
+                };
             }
 
             $product = Product::find($request->id);
