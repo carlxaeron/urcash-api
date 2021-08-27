@@ -908,15 +908,16 @@ class ProductRepository implements ProductInterface
                 'price' => $request->price,
                 'name' => $request->name,
                 'description' => $request->description,
+                'image' => $request->image,
             ];
             $rules = [
                 'id' => ['required','exists:products,id',function($attr,$val,$fail){
-                    if(!Product::where('id',$val)->rejected()->first()) $fail('Product is not rejected.');
+                    if(!Product::where(['id'=>$val,'user_id'=>Auth::user()->id])->rejected()->first()) $fail('Product is not rejected or you dont own this product.');
                 }],
                 'remarks' => 'required',
                 'price' => 'sometimes|numeric|min:0',
                 'name' => 'sometimes',
-                // 'image' => 'required|max:3|array',
+                'image' => 'sometimes|max:3|array',
                 'description' => 'sometimes',
             ];
 
@@ -947,6 +948,27 @@ class ProductRepository implements ProductInterface
                 $_price = Price::where('product_id', $request->id);
                 $_price->price = $request->price;
             }
+
+            if($request->image) {
+                if($request->image && $request->image_id) {
+                    foreach($request->image as $_key=>$img) {
+                        $_img = ProductImage::where([
+                            'id'=>$request->image_id[$_key],
+                            'product_id'=>$request->id,
+                        ])->first();
+                        if($_img) {
+                            $_img->filename = $img->store('image');
+                            $_img->save();
+                        }
+                    };
+                } else {
+                    foreach($request->image as $img) {
+                        ProductImage::create(['filename'=>$img->store('image'),'product_id'=>$request->id]);
+                    }
+                }
+            }
+
+            $product = Product::find($request->id);
 
             $notify = app(Notify::class)->notifiable()->associate($product);
             $notify->message = $inputs['remarks'];
