@@ -447,6 +447,8 @@ Route::prefix('/v1')->group(function () {
             Route::put('/product/verify/{id}', 'Api\ProductController@verifyProduct');
             // Reject Product
             Route::put('/product/reject/{id}', 'Api\ProductController@rejectProduct');
+            // Ads
+            Route::post('/ad/{name}', 'Api\AdController@store');
         }); 
     });
 });
