@@ -55,7 +55,7 @@ class AdController extends Controller
             }
 
             foreach($request->images as $img) {
-                $ad->images()->create(['path'=>$img->store('ad')]);
+                $ad->images()->create(['path'=>$img->store('image/ad')]);
                 $ad->save();
             }
 
@@ -78,7 +78,15 @@ class AdController extends Controller
      */
     public function show($id)
     {
-        //
+        try {
+            $ad = Ad::where('name', $id)->first();
+
+            if($ad) return $this->success('success fetched ad', $ad);
+            else return $this->error('ad not found',[]);
+        } catch (Exception $e) {
+            DB::rollback();
+            return $this->error($e->getMessage());
+        }
     }
 
     /**
@@ -101,6 +109,19 @@ class AdController extends Controller
      */
     public function destroy($id)
     {
-        //
+        DB::beginTransaction();
+        try {
+            $ad = Ad::where('name', $id)->first();
+
+            if($ad) {
+                $ad->delete();
+                DB::commit();
+                return $this->success('success deleted the ad', $ad);
+            } 
+            else return $this->error('ad not found',[]);
+        } catch (Exception $e) {
+            DB::rollback();
+            return $this->error($e->getMessage());
+        }
     }
 }
