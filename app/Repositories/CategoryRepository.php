@@ -15,7 +15,7 @@ class CategoryRepository implements CategoryInterface {
 
     public function listCategory()
     {
-        $data = Category::all();
+        $data = Category::orderBy('name')->get();
 
         return $this->success('Successfully fetched the list.', $data);
     }

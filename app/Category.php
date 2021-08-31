@@ -16,4 +16,8 @@ class Category extends Model
     public function setNameAttribute($value) {
         $this->attributes['name'] = strtoupper($value);
     }
+
+    public function getNameAttribute() {
+        return strtoupper($this->attributes['name']);
+    }
 }
