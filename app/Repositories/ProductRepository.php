@@ -819,13 +819,13 @@ class ProductRepository implements ProductInterface
                 'id' => $request->id,
             ];
             $rules = [
-                'id' => 'required|exists:products,id',
+                'id' => 'required','exists:products,id',
             ];
 
-            if(config('UCC.type') == 'RED') {
-                $inputs['company_price'] = $request->company_price;
-                $rules['company_price'] = 'required|numeric|min:0';
-            }
+            // if(config('UCC.type') == 'RED') {
+            //     $inputs['company_price'] = $request->company_price;
+            //     $rules['company_price'] = 'required|numeric|min:0';
+            // }
 
             $validation = Validator::make($inputs, $rules);
 
@@ -934,7 +934,7 @@ class ProductRepository implements ProductInterface
                 'remarks' => 'required',
                 'price' => 'sometimes|numeric|min:0',
                 'name' => 'sometimes',
-                'image' => 'sometimes|max:3|array',
+                'image' => 'sometimes|max:3',
                 'description' => 'sometimes',
             ];
 

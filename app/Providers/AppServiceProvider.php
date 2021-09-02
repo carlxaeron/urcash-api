@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Observers\ProductObserver;
 use App\Observers\PurchaseItemObserver;
+use App\Product;
 use App\PurchaseItem;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Schema;
@@ -156,5 +158,6 @@ class AppServiceProvider extends ServiceProvider
         Schema::defaultStringLength(191);
 
         PurchaseItem::observe(PurchaseItemObserver::class);
+        Product::observe(ProductObserver::class);
     }
 }

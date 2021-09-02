@@ -63,6 +63,12 @@ class User extends Authenticatable implements CanResetPasswordContract
         });
     }
 
+    // public function scopeAdmin($q)
+    // {
+    //     return $q->select('users.*')
+    //     ->leftJoin('App\UsersRole')
+    // }
+
     /**
      * Serialize timestamps as datetime strings without the timezone.
      */

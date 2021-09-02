@@ -45,7 +45,7 @@ class Product extends Model
     }
     public function remarks()
     {
-        return $this->morphMany('App\Notify', 'notifiable');
+        return $this->morphMany('App\Notify', 'notifiable')->where('notifies.type','product_remarks');
     }
 
     public function scopeVerified($query) {
