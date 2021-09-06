@@ -373,6 +373,9 @@ Route::prefix('/v1')->group(function () {
 
     // Payment
     Route::get('/payment/callback', 'Api\PaymentController@paymentCallback');
+
+    // Ad
+    Route::get('/ad/{name}', 'Api\AdController@show');
     
     // Requires TOKEN
     Route::middleware('auth:api')->group(function () {
@@ -448,7 +451,6 @@ Route::prefix('/v1')->group(function () {
             // Reject Product
             Route::put('/product/reject/{id}', 'Api\ProductController@rejectProduct');
             // Ads
-            Route::get('/ad/{name}', 'Api\AdController@show');
             Route::post('/ad/{name}', 'Api\AdController@store');
             Route::delete('/ad/{name}', 'Api\AdController@destroy');
         }); 
