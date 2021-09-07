@@ -454,6 +454,7 @@ Route::prefix('/v1')->group(function () {
             // Ads
             Route::post('/ad/{name}', 'Api\AdController@store');
             Route::delete('/ad/{name}', 'Api\AdController@destroy');
+            Route::delete('/ad/{name}/{imgid}', 'Api\AdController@destroy');
         }); 
     });
 });

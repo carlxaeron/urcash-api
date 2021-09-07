@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Ad;
 use App\Http\Controllers\Controller;
+use App\Image;
 use App\Traits\ResponseAPI;
 use Exception;
 use Illuminate\Http\Request;
@@ -113,12 +114,24 @@ class AdController extends Controller
         try {
             $ad = Ad::where('name', $id)->first();
 
-            if($ad) {
+            if(!$ad) {
+                return $this->error('Ad not found',[]);
+            }
+            elseif($imgid = request()->segment(5)) {
+                $img = $ad->images()->where('id',$imgid)->first();
+                if($img) {
+                    $img->delete();
+                    $ad = Ad::where('name', $id)->first();
+                    DB::commit();
+                    return $this->success('Success deleted the ad image', $ad);
+                } 
+                else return $this->error('Ad img not found',[]);
+            }
+            elseif($ad) {
                 $ad->delete();
                 DB::commit();
                 return $this->success('success deleted the ad', $ad);
             } 
-            else return $this->error('ad not found',[]);
         } catch (Exception $e) {
             DB::rollback();
             return $this->error($e->getMessage());
