@@ -165,6 +165,31 @@ class UserRepository implements UserInterface
         }
     }
 
+    public function purchasePointsOnRed(User $user, Request $request)
+    {
+        $inputs = [
+            'points' => $request->points,
+            'red_acct' => $request->red_acct,
+        ];
+        $rules = [
+            'points'=>'required|integer',
+            'red_acct'=>'required',
+        ];
+
+        $validation = Validator::make($inputs, $rules);
+
+        if ($validation->fails()) return $this->error($validation->errors()->all());
+
+        $user = Auth::user();
+        $res = app(RedService::class)->purchasePointsOnRed($user, $request);
+
+        if($res['status'] == 'error') return $this->error($res['message'], $res['code']);
+
+        $resp['RED_DATA'] = $res['message'][0] ?? $res['message'];
+
+        return $this->success('Successfully purchased points.', $resp);
+    }
+
     public function loginV1(Request $request)
     {
         try {

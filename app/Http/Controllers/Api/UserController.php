@@ -84,6 +84,11 @@ class UserController extends Controller
         return $this->userInterface->getListPackagesWithRed();
     }
 
+    public function purchasePointsOnRed(User $user, Request $request)
+    {
+        return $this->userInterface->purchasePointsOnRed($user, $request);
+    }
+
     /**
      * Create support ticket based on mobile_number, email and birthdate
      */

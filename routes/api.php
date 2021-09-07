@@ -384,6 +384,7 @@ Route::prefix('/v1')->group(function () {
         Route::get('/info-with-red', [App\Http\Controllers\Api\UserController::class, 'getInfoWithRed']);
         Route::get('/accounts-on-red', [App\Http\Controllers\Api\UserController::class, 'getLinkedWithRed']);
         Route::get('/packages-on-red', [App\Http\Controllers\Api\UserController::class, 'getListPackagesWithRed']);
+        Route::post('/purchase-pts-on-red', [App\Http\Controllers\Api\UserController::class, 'purchasePointsOnRed']);
 
         // User - Product
         Route::get('/products/me', 'Api\ProductController@myProducts');

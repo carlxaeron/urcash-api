@@ -39,6 +39,8 @@ interface UserInterface
 
     public function getListPackagesWithRed();
 
+    public function purchasePointsOnRed(User $user, Request $request);
+
     public function verifyMerchant(Request $request);
 
     /**

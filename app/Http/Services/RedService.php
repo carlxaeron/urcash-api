@@ -104,6 +104,34 @@ class RedService {
         }
     }
 
+    public function purchasePointsOnRed(User $user, Request $request)
+    {
+        $transid = time();
+        $userid = $user->id;
+        $acctno = $request->red_acct;
+        $pts = $request->points;
+        $_date = date('Y-m-d H:i:s');
+        $date = urlencode($_date);
+        $URL = "https://myaccount.redinc.net/b2bapi/?trans=purchasepoints&transid=$transid&u_id=$userid&acctno=$acctno&pts=$pts&payment_gateway=pio&purchase_dt=$date&transdate=$date&security_key=".(sha1('**pre**'.$transid.($_date).'**sup**'));
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+        CURLOPT_URL => $URL,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => '',
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => 'GET',
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+        return (array) json_decode($response,true);
+    }
+
     public function link(User $user, Request $request)
     {
         $date = date('Y-m-d H:i:s');
