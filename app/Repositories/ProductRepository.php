@@ -969,11 +969,12 @@ class ProductRepository implements ProductInterface
                 $product->description = $request->description;
             }
             $product->save();
-
             if(isset($inputs['price']) && $inputs['price']) {
-                $_price = Price::where('product_id', $request->id);
+                $_price = Price::where('product_id', $request->id)->first();
                 $_price->price = $request->price;
+                $_price->save();
             }
+
 
             if($request->image) {
                 foreach($request->image as $_key=>$img) {
