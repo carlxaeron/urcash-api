@@ -77,7 +77,7 @@ class RedService {
                 $amt = $product->price;
                 $company_price = $product->company_price;
                 $qty = $items['qty'];
-                $URL = "https://myaccount.redinc.net/b2bapi/?trans=purchase&transid=$transid&u_id=$uid&acctno=$acctno&prod_id=$prodid&qty=$qty&amount=$company_price&payment_gateway=pio&purchase_dt=$date&transdate=$date&security_key=".(sha1('**pre**'.$transid.($req->created_at).'**sup**'));
+                $URL = "https://myaccount.redinc.net/b2bapi/?trans=purchase&transid=$transid&u_id=$uid&acctno=$acctno&prod_id=$prodid&qty=$qty&amount=$company_price&srp=$amt&payment_gateway=pio&purchase_dt=$date&transdate=$date&security_key=".(sha1('**pre**'.$transid.($req->created_at).'**sup**'));
                 $curl = curl_init();
 
                 curl_setopt_array($curl, array(
