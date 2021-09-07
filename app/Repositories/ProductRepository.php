@@ -926,6 +926,7 @@ class ProductRepository implements ProductInterface
                 'name' => $request->name,
                 'description' => $request->description,
                 'image' => $request->image,
+                'categories' =>  $request->categories,
             ];
             $rules = [
                 'id' => ['required','exists:products,id',function($attr,$val,$fail){
@@ -937,6 +938,14 @@ class ProductRepository implements ProductInterface
                 'image' => 'sometimes|max:3',
                 'description' => 'sometimes',
             ];
+
+            if($request->categories) {
+                $rules['categories'] = ['array', function($attr, $value, $fail){
+                    foreach($value as $v) {
+                        if(!Category::find($v)) $fail("The category ID #$v does not exist.");
+                    }
+                }];
+            }
 
             if(config('UCC.type') == 'RED') {
                 $inputs['company_price'] = $request->company_price;
@@ -981,6 +990,13 @@ class ProductRepository implements ProductInterface
                         ProductImage::create(['filename'=>$img->store('image'),'product_id'=>$request->id]);
                     }
                 };
+            }
+
+            if($request->categories) {
+                ProductCategory::where('product_id',$request->id)->delete();
+                foreach($request->categories as $cat) {
+                    ProductCategory::create(['product_id'=>$request->id,'category_id'=>$cat]);
+                }
             }
 
             $product = Product::find($request->id);
