@@ -37,6 +37,8 @@ interface UserInterface
 
     public function getLinkedWithRed();
 
+    public function getListPackagesWithRed();
+
     public function verifyMerchant(Request $request);
 
     /**

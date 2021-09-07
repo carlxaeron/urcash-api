@@ -383,6 +383,7 @@ Route::prefix('/v1')->group(function () {
         Route::post('/link-with-red', [App\Http\Controllers\Api\UserController::class, 'linkV1WithRed']);
         Route::get('/info-with-red', [App\Http\Controllers\Api\UserController::class, 'getInfoWithRed']);
         Route::get('/accounts-on-red', [App\Http\Controllers\Api\UserController::class, 'getLinkedWithRed']);
+        Route::get('/packages-on-red', [App\Http\Controllers\Api\UserController::class, 'getListPackagesWithRed']);
 
         // User - Product
         Route::get('/products/me', 'Api\ProductController@myProducts');

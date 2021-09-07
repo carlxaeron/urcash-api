@@ -79,6 +79,11 @@ class UserController extends Controller
         return $this->userInterface->loginV1WithRed($request);
     }
 
+    public function getListPackagesWithRed()
+    {
+        return $this->userInterface->getListPackagesWithRed();
+    }
+
     /**
      * Create support ticket based on mobile_number, email and birthdate
      */

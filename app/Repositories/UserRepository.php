@@ -118,6 +118,15 @@ class UserRepository implements UserInterface
         return $this->success("Successfully fetched the user currency and points", $res['message']);
     }
 
+    public function getListPackagesWithRed()
+    {
+        $res = app(RedService::class)->getListPackages();
+
+        if($res['status'] == 'error') return $this->error($res['message']);
+
+        return $this->success("Successfully fetched the list of packages", $res['message']);
+    }
+
     public function linkV1WithRed(Request $request)
     {
         DB::beginTransaction();
