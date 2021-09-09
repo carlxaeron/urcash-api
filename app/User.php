@@ -47,12 +47,18 @@ class User extends Authenticatable implements CanResetPasswordContract
 
     protected $with = [
         // 'roles'
-        'address'
+        'address',
+        'documents'
     ];
 
     protected $appends = [
         'merchant_level'
     ];
+
+    public function documents()
+    {
+        return $this->morphMany('App\Document','documentable');
+    }
 
     public function scopeRedLogin($q, $user)
     {

@@ -416,6 +416,10 @@ Route::prefix('/v1')->group(function () {
         Route::post('/cart', 'Api\UserController@addToCart');
         Route::get('/cart', 'Api\UserController@getCart');
         Route::delete('/cart', 'Api\UserController@deleteCheckedCart');
+
+        Route::get('/documents/user/{id}', 'Api\DocumentController@showByUserId');
+        Route::post('/documents', 'Api\DocumentController@store');
+        Route::delete('/documents/{id}', 'Api\DocumentController@destroy');
         
         // Admin/Merchant Role
         Route::middleware(['role:administrator,merchant',function($response, $next){
