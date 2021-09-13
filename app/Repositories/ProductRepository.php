@@ -572,6 +572,7 @@ class ProductRepository implements ProductInterface
                 'name' => $request->name,
                 // 'image' =>  $request->image,
                 'description' =>  $request->description,
+                'categories' =>  $request->categories,
             ];
             $rules = [
                 'price' => 'required|numeric|min:0',
@@ -583,6 +584,14 @@ class ProductRepository implements ProductInterface
             if(config('UCC.type') == 'RED') {
                 $inputs['company_price'] = $request->company_price;
                 $rules['company_price'] = 'required|numeric|min:0';
+            }
+
+            if($request->categories) {
+                $rules['categories'] = ['array', function($attr, $value, $fail){
+                    foreach($value as $v) {
+                        if(!Category::find($v)) $fail("The category ID #$v does not exist.");
+                    }
+                }];
             }
 
             $validation = Validator::make($inputs, $rules);
@@ -610,6 +619,13 @@ class ProductRepository implements ProductInterface
                     } else {
                         ProductImage::create(['filename'=>$img->store('image'),'product_id'=>$id]);
                     }
+                }
+            }
+
+            if($request->categories) {
+                ProductCategory::where('product_id',$id)->delete();
+                foreach($request->categories as $cat) {
+                    ProductCategory::create(['product_id'=>$id,'category_id'=>$cat]);
                 }
             }
 
