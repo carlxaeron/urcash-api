@@ -3,6 +3,10 @@
 namespace App\Listeners\Product;
 
 use App\Events\Product\Created;
+use App\Notifications\Product\Created as ProductCreated;
+use App\Role;
+use App\User;
+use App\UsersRole;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Mail;
@@ -29,6 +33,13 @@ class NotifyAdminsOnProductCreated
     {
         $product = $event->product;
 
-        // Mail::to($request->user())->send(new MailableClass);
+        $role = Role::where('slug','administrator')->first();
+        $users = UsersRole::where('role_id', $role->id)->with(['user'])->get();
+        foreach($users as $user) {
+            $_user = User::find($user->user->id);
+            if($_user) $_user->notify(new ProductCreated());
+        }
+        
+        $product = $event->product;
     }
 }
