@@ -168,34 +168,45 @@ class UserRepository implements UserInterface
 
     public function purchasePointsOnRed(User $user, Request $request)
     {
-        $inputs = [
-            'points' => $request->points,
-            'red_acct' => $request->red_acct,
-        ];
-        $rules = [
-            'points'=>'required|integer',
-            'red_acct'=>'required',
-        ];
+        DB::beginTransaction();
+        try {
+            $inputs = [
+                'points' => $request->points,
+                'red_acct' => $request->red_acct,
+            ];
+            $rules = [
+                'points'=>'required|integer',
+                'red_acct'=>'required',
+            ];
+    
+            $validation = Validator::make($inputs, $rules);
+    
+            if ($validation->fails()) return $this->error($validation->errors()->all());
+    
+            $user = Auth::user();
+    
+            // $res = app(RedService::class)->purchasePointsOnRed($user, $request);
+    
+            // if($res['status'] == 'error') return $this->error($res['message'], $res['code']);
+    
+            // $resp['RED_DATA'] = $res['message'][0] ?? $res['message'];
+    
+            $points = UserPurchasePoint::create([
+                'points'=>      $request->points,
+                'red_account'=> $request->red_acct,
+                'user_id'=>     Auth::user()->id,
+                'status'=>      'unpaid',
+            ]);
 
-        $validation = Validator::make($inputs, $rules);
+            DB::commit();
 
-        if ($validation->fails()) return $this->error($validation->errors()->all());
+            $points = $points->find($points->id);
 
-        $user = Auth::user();
-
-        // $res = app(RedService::class)->purchasePointsOnRed($user, $request);
-
-        // if($res['status'] == 'error') return $this->error($res['message'], $res['code']);
-
-        // $resp['RED_DATA'] = $res['message'][0] ?? $res['message'];
-
-        $points = UserPurchasePoint::create([
-            'points'=>      $request->points,
-            'red_account'=> $request->red_acct,
-            'user_id'=>     Auth::user()->id,
-        ]);
-
-        return $this->success('Successfully created invoice for points.', $points);
+            return $this->success('Successfully created invoice for points.', $points);
+        } catch (Exception $e) {
+            DB::rollback();
+            return $this->error($e->getMessage(), $e->getCode());
+        }
     }
 
     public function loginV1(Request $request)
