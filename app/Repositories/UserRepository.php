@@ -25,6 +25,7 @@ use App\Repositories\ShopRepository;
 use App\Repositories\SupportTicketRepository;
 use App\Traits\ResponseAPI;
 use App\UserCart;
+use App\UserPurchasePoint;
 use Carbon\Carbon;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
@@ -181,13 +182,20 @@ class UserRepository implements UserInterface
         if ($validation->fails()) return $this->error($validation->errors()->all());
 
         $user = Auth::user();
-        $res = app(RedService::class)->purchasePointsOnRed($user, $request);
 
-        if($res['status'] == 'error') return $this->error($res['message'], $res['code']);
+        // $res = app(RedService::class)->purchasePointsOnRed($user, $request);
 
-        $resp['RED_DATA'] = $res['message'][0] ?? $res['message'];
+        // if($res['status'] == 'error') return $this->error($res['message'], $res['code']);
 
-        return $this->success('Successfully purchased points.', $resp);
+        // $resp['RED_DATA'] = $res['message'][0] ?? $res['message'];
+
+        $points = UserPurchasePoint::create([
+            'points'=>      $request->points,
+            'red_account'=> $request->red_acct,
+            'user_id'=>     Auth::user()->id,
+        ]);
+
+        return $this->success('Successfully created invoice for points.', $points);
     }
 
     public function loginV1(Request $request)
