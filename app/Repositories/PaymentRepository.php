@@ -2,17 +2,20 @@
 namespace App\Repositories;
 
 use App\Events\PioCallback;
+use App\Http\Services\RedService;
 use App\Interfaces\PaymentInterface;
 use App\Invoice;
 use App\Price;
 use App\Product;
 use App\Traits\ResponseAPI;
 use App\User;
+use App\UserPurchasePoint;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use stdClass;
 
 class PaymentRepository implements PaymentInterface
 {
@@ -159,24 +162,37 @@ class PaymentRepository implements PaymentInterface
                 'digest' => 'required',
             ];
             $validation = Validator::make($inputs, $rules);
-
+            
             if ($validation->fails()) return $this->error($validation->errors()->all());
-
+            
             // @todo: add security here
+            
+            if($request->segment(5) == 'pts') {
+                $upp = UserPurchasePoint::find($request->txnid);
+                if(!$upp || $upp->status == 'paid') return $this->error('Already validated this or it does not exists.');
+                $upp->status = 'paid';
+                $upp->save();
 
-            $invoice = Invoice::checkoutItemsRef($request->txnid)->first();
-            if($invoice->status !== 'draft') return $this->error('Already validated this invoice.');
+                $req = new stdClass;
+                $req->points = $upp->points;
+                $req->red_acct = $upp->red_account;
 
-            if($inputs['status'] == 'S') {
-                $invoice->status = 'paid';
-                $invoice->save();
+                app(RedService::class)->purchasePointsOnRed(Auth::user(), $req);
             } else {
-                $invoice->status = 'unpaid';
-                $invoice->save();
+                $invoice = Invoice::checkoutItemsRef($request->txnid)->first();
+                if($invoice->status !== 'draft') return $this->error('Already validated this invoice.');
+    
+                if($inputs['status'] == 'S') {
+                    $invoice->status = 'paid';
+                    $invoice->save();
+                } else {
+                    $invoice->status = 'unpaid';
+                    $invoice->save();
+                }
+    
+                $user = User::find($invoice->user_id);
+                event(new PioCallback($invoice, $user));
             }
-
-            $user = User::find($invoice->user_id);
-            event(new PioCallback($invoice, $user));
 
             DB::commit();
 

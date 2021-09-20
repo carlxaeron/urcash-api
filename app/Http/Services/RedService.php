@@ -104,7 +104,7 @@ class RedService {
         }
     }
 
-    public function purchasePointsOnRed(User $user, Request $request)
+    public function purchasePointsOnRed(User $user, $request)
     {
         $transid = time();
         $userid = $user->id;
