@@ -375,7 +375,7 @@ Route::prefix('/v1')->group(function () {
     Route::get('/payment/callback', 'Api\PaymentController@paymentCallback');
 
     // Ad
-    Route::get('/ad/{name}', 'Api\AdController@show');
+    Route::any('/ad/{name}', 'Api\AdController@show');
     
     // Requires TOKEN
     Route::middleware('auth:api')->group(function () {
