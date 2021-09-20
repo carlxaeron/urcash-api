@@ -76,6 +76,12 @@ class PaymentRepository implements PaymentInterface
                 'items.*.product' => 'required|exists:products,id|exists:prices,product_id',
                 'items.*.qty' => 'required',
             ];
+
+            if(config('UCC.type') == 'RED') {
+                $inputs['red_account'] = $request->red_account;
+                $rules['red_account'] = 'required';
+            }
+
             $validation = Validator::make($inputs, $rules);
 
             if ($validation->fails()) return $this->error($validation->errors()->all());
@@ -96,6 +102,7 @@ class PaymentRepository implements PaymentInterface
                 'data'=>[
                     'CHECKOUT_ITEMS__items'=>$items->toArray(),
                     'CHECKOUT_ITEMS__reference'=>\Str::random(20),
+                    'requests'=>$request->all(),
                 ]
             ]);
 
