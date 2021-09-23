@@ -16,6 +16,9 @@ class PurchaseItemObserver
     public function created(PurchaseItem $purchaseItem)
     {
         // dd($purchaseItem->);
+        if($purchaseItem->purchase_status == 'paid') {
+            event(new PaidEvent($purchaseItem));
+        }
     }
 
     /**

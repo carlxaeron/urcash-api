@@ -3,6 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\PaidEvent;
+use App\Http\Services\RedService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
@@ -27,7 +28,7 @@ class ProcessPaidPurchase
     public function handle(PaidEvent $event)
     {
         if(config('UCC.type') == 'RED') {
-            
+            app(RedService::class)->purchase($event->purchase);
         }
     }
 }

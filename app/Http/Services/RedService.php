@@ -71,7 +71,8 @@ class RedService {
             $user = User::find($uid);
             $acctno = $req->data['requests']['red_account'] ?? $user->data['RED_DATA_FROM_API']['accountno'] ?? $user->data['RED_DATA']['accountno'] ?? false;
             $date = urlencode($req->created_at);
-            foreach($req->data['CHECKOUT_ITEMS__items'] as $items) {
+            $data = $req->data;
+            foreach($req->data['CHECKOUT_ITEMS__items'] as $keyitems=>$items) {
                 $prodid = $items['product'];
                 $product = Product::find($prodid);
                 $amt = $product->price;
@@ -97,10 +98,48 @@ class RedService {
 
                 $resp = (array) json_decode($response,true);
                 if($resp['status'] == 'error') return (array) json_decode($response,true);
+                else {
+                    $data['CHECKOUT_ITEMS__items_response'][$keyitems] = $resp;
+                }
             }
+            $req->data = $data;
+            $req->save();
         }
         elseif($req instanceof PurchaseItem) {
-
+            $transid = time();
+            $uid = $req->user_id;
+            $user = User::find($uid);
+            $date = urlencode($req->created_at);
+            $prodid = $req->product_id;
+            $product = Product::find($prodid);
+            $amt = $product->price;
+            $company_price = $product->company_price;
+            $qty = $req->quantity;
+            $acctno = $req->data['requests']['red_account'] ?? $user->data['RED_DATA_FROM_API']['accountno'] ?? $user->data['RED_DATA']['accountno'] ?? false;
+            $URL = "https://myaccount.redinc.net/b2bapi/?trans=purchase&transid=$transid&u_id=$uid&acctno=$acctno&prod_id=$prodid&qty=$qty&amount=$company_price&srp=$amt&payment_gateway=pio&purchase_dt=$date&transdate=$date&security_key=".(sha1('**pre**'.$transid.($req->created_at).'**sup**'));
+            $curl = curl_init();
+            $data = $req->data;
+            
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => $URL,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => '',
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => 'GET',
+            ));
+            
+            $response = curl_exec($curl);
+            
+            curl_close($curl);
+            
+            $resp = (array) json_decode($response,true);
+            if($resp['status'] == 'error') return (array) json_decode($response,true);
+            $data['CHECKOUT_ITEMS__response'] = $resp;
+            $req->data = $data;
+            $req->save();
         }
     }
 
