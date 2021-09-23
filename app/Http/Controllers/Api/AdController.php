@@ -56,7 +56,7 @@ class AdController extends Controller
             }
 
             foreach($request->images as $img) {
-                $ad->images()->create(['path'=>$img->store('image/ad')]);
+                $ad->images()->create(['path'=>$img->store('image/ad_renamed')]);
                 $ad->save();
             }
 
