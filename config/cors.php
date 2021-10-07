@@ -17,13 +17,13 @@ return [
 
     'paths' => ['api/*'],
 
-    'allowed_methods' => ['*'],
+    'allowed_methods' => ['POST','GET','OPTIONS','PUT','DELETE','*'],
 
     'allowed_origins' => ['*'],
 
     'allowed_origins_patterns' => ['*'],
 
-    'allowed_headers' => ['*'],
+    'allowed_headers' => ['Origin', 'Authorization', 'X-Requested-With', 'Content-Type', 'Accept', '*'],
 
     'exposed_headers' => [],
 
