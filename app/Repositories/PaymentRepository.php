@@ -156,6 +156,7 @@ class PaymentRepository implements PaymentInterface
     {
         DB::beginTransaction();
         try {
+            dd($request->all());
             $inputs = [
                 'status' => $request->status,
                 'txnid' => $request->txnid,
