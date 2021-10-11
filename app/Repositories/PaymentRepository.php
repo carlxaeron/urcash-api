@@ -191,7 +191,7 @@ class PaymentRepository implements PaymentInterface
                 $req->points = $upp->points;
                 $req->red_acct = $upp->red_account;
 
-                $user = User::find($request->id);
+                $user = User::where('email',$request->email)->first();
 
                 if(!$user) return $this->error('User not exists.');
 
