@@ -413,6 +413,7 @@ Route::prefix('/v1')->group(function () {
         // Payment
         Route::post('/payment/request', 'Api\PaymentController@paymentRequest');
         Route::get('/payment/checker', 'Api\PaymentController@paymentChecker');
+        Route::get('/payment/checker/pts', 'Api\PaymentController@paymentChecker');
 
         // Cart
         Route::post('/cart', 'Api\UserController@addToCart');

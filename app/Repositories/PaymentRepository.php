@@ -132,10 +132,19 @@ class PaymentRepository implements PaymentInterface
             ];
             $validation = Validator::make($inputs, $rules);
 
-            $invoice = Invoice::checkoutItemsRef($request->txnid)->first();
-            return $this->success('Success checker.', [
-                'status'=>$invoice->status ?? false,
-            ]);
+            if($request->segment(5) == 'pts') {
+                $upp = UserPurchasePoint::find($request->txnid)->first();
+
+                return $this->success('Success checker.', [
+                    'status'=>$upp->status ?? false,
+                ]);
+            } else {
+                $invoice = Invoice::checkoutItemsRef($request->txnid)->first();
+
+                return $this->success('Success checker.', [
+                    'status'=>$invoice->status ?? false,
+                ]);
+            }
 
             if ($validation->fails()) return $this->error($validation->errors()->all());
         } catch (Exception $e) {
@@ -155,8 +164,13 @@ class PaymentRepository implements PaymentInterface
             ];
             $rules = [
                 'status' => 'required',
-                'txnid' => ['required',function($attr,$value,$fail){
-                    if(!Invoice::checkoutItemsRef($value)->first()) $fail('Invalid Transaction ID');
+                'txnid' => ['required',function($attr,$value,$fail) use($request){
+                    if(
+                        $request->segment(5) != 'pts' && !Invoice::checkoutItemsRef($value)->first()
+                    ) $fail('Invalid TXN ID');
+                    if(
+                        $request->segment(5) == 'pts' && !UserPurchasePoint::find($value)->first()
+                    ) $fail('Invalid TXN ID');
                 }],
                 'refno' => 'required',
                 'digest' => 'required',
