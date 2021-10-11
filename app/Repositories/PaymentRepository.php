@@ -200,7 +200,8 @@ class PaymentRepository implements PaymentInterface
                 $resp = app(RedService::class)->purchasePointsOnRed($user, $req);
 
                 $data = $upp->data ?? [];
-                $upp->data = $data['PPOINTS_RESPONSE'] = $resp;
+                $data['RED_PPOINTS_RESPONSE'] = $resp;
+                $upp->data = $data;
                 $upp->save();
             } else {
                 $invoice = Invoice::checkoutItemsRef($request->txnid)->first();
