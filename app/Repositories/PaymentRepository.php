@@ -139,6 +139,7 @@ class PaymentRepository implements PaymentInterface
                 $upp = UserPurchasePoint::find($request->txnid)->first();
                 return $this->success('Success checker.', [
                     'status'=>$upp->status ?? false,
+                    'request'=>$request->all(),
                 ]);
             } else {
                 $invoice = Invoice::checkoutItemsRef($request->txnid)->first();
