@@ -191,7 +191,11 @@ class PaymentRepository implements PaymentInterface
                 $req->points = $upp->points;
                 $req->red_acct = $upp->red_account;
 
-                app(RedService::class)->purchasePointsOnRed(User::find($request->id), $req);
+                $user = User::find($request->id);
+
+                if(!$user) return $this->error('User not exists.');
+
+                app(RedService::class)->purchasePointsOnRed($user, $req);
             } else {
                 $invoice = Invoice::checkoutItemsRef($request->txnid)->first();
                 if($invoice->status !== 'draft') return $this->error('Already validated this invoice.');
