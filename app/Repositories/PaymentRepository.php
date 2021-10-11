@@ -139,7 +139,7 @@ class PaymentRepository implements PaymentInterface
                 $upp = UserPurchasePoint::find($request->txnid);
                 return $this->success('Success checker.', [
                     'status'=>$upp->status ?? false,
-                    'request'=>$request->all(),
+                    // 'request'=>$request->all(),
                 ]);
             } else {
                 $invoice = Invoice::checkoutItemsRef($request->txnid)->first();
@@ -197,7 +197,11 @@ class PaymentRepository implements PaymentInterface
 
                 if(!$user) return $this->error('User not exists.');
 
-                app(RedService::class)->purchasePointsOnRed($user, $req);
+                $resp = app(RedService::class)->purchasePointsOnRed($user, $req);
+
+                $data = $upp->data ?? [];
+                $upp->data = $data['PPOINTS_RESPONSE'] = $resp;
+                $upp->save();
             } else {
                 $invoice = Invoice::checkoutItemsRef($request->txnid)->first();
                 if($invoice->status !== 'draft') return $this->error('Already validated this invoice.');
