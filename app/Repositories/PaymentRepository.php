@@ -132,7 +132,7 @@ class PaymentRepository implements PaymentInterface
             ];
             $validation = Validator::make($inputs, $rules);
 
-            dd($request->all());
+            // dd($request->all());
             if ($validation->fails()) return $this->error($validation->errors()->all());
 
             if($request->segment(5) == 'pts') {
