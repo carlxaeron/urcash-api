@@ -24,9 +24,9 @@ class PaymentController extends Controller
         return $this->interface->paymentRequest($request);
     }
 
-    public function paymentCallback(Request $request)
+    public function paymentCallback(Request $request, $id = false)
     {
-        return $this->interface->paymentCallback($request);
+        return $this->interface->paymentCallback($request, $id);
     }
 
     public function paymentChecker(Request $request)

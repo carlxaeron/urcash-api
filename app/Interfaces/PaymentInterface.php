@@ -9,7 +9,7 @@ interface PaymentInterface {
 
     public function paymentRequest(Request $request);
 
-    public function paymentCallback(Request $request);
+    public function paymentCallback(Request $request, $id);
 
     public function paymentChecker(Request $request);
 }

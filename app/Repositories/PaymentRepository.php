@@ -152,7 +152,7 @@ class PaymentRepository implements PaymentInterface
         }
     }
 
-    public function paymentCallback(Request $request)
+    public function paymentCallback(Request $request, $id)
     {
         DB::beginTransaction();
         try {
@@ -192,7 +192,7 @@ class PaymentRepository implements PaymentInterface
                 $req->points = $upp->points;
                 $req->red_acct = $upp->red_account;
 
-                $user = User::where('email',$request->email)->first();
+                $user = User::find($id);
 
                 if(!$user) return $this->error('User not exists.');
 

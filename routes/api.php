@@ -374,7 +374,7 @@ Route::prefix('/v1')->group(function () {
     // Payment
     Route::get('/payment/callback', 'Api\PaymentController@paymentCallback');
     
-    Route::get('/payment/callback/pts', 'Api\PaymentController@paymentCallback');
+    Route::get('/payment/callback/pts/{id}', 'Api\PaymentController@paymentCallback');
 
     // Ad
     Route::any('/ad_renamed/{name}', 'Api\AdController@show');
