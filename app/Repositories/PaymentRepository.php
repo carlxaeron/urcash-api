@@ -156,7 +156,7 @@ class PaymentRepository implements PaymentInterface
             $rules = [
                 'status' => 'required',
                 'txnid' => ['required',function($attr,$value,$fail){
-                    if(!Invoice::checkoutItemsRef($value)->first()) $fail('Invalid TXN ID');
+                    if(!Invoice::checkoutItemsRef($value)->first()) $fail('Invalid Transaction ID');
                 }],
                 'refno' => 'required',
                 'digest' => 'required',
