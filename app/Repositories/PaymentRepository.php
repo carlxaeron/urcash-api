@@ -134,7 +134,7 @@ class PaymentRepository implements PaymentInterface
 
             if($request->segment(5) == 'pts') {
                 $upp = UserPurchasePoint::find($request->txnid)->first();
-
+                dd($upp);
                 return $this->success('Success checker.', [
                     'status'=>$upp->status ?? false,
                 ]);
