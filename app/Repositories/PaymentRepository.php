@@ -132,9 +132,11 @@ class PaymentRepository implements PaymentInterface
             ];
             $validation = Validator::make($inputs, $rules);
 
+            dd($request->all());
+            if ($validation->fails()) return $this->error($validation->errors()->all());
+
             if($request->segment(5) == 'pts') {
                 $upp = UserPurchasePoint::find($request->txnid)->first();
-                dd($upp);
                 return $this->success('Success checker.', [
                     'status'=>$upp->status ?? false,
                 ]);
@@ -146,7 +148,6 @@ class PaymentRepository implements PaymentInterface
                 ]);
             }
 
-            if ($validation->fails()) return $this->error($validation->errors()->all());
         } catch (Exception $e) {
             return $this->error($e->getMessage());
         }
