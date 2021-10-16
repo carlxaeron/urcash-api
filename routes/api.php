@@ -464,6 +464,8 @@ Route::prefix('/v1')->group(function () {
             Route::post('/ad_renamed/{name}', 'Api\AdController@store');
             Route::delete('/ad_renamed/{name}', 'Api\AdController@destroy');
             Route::delete('/ad_renamed/{name}/{imgid}', 'Api\AdController@destroy');
-        }); 
+            // Document
+            Route::put('/documents/update_status/{id}', 'Api\DocumentController@update');
+    }); 
     });
 });

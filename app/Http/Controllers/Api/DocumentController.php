@@ -106,7 +106,30 @@ class DocumentController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        DB::beginTransaction();
+        try {
+            $doc = Document::where('id',$id)->first();
+
+            if(!$doc) return $this->success('Document not found.', []);
+
+            $validation = Validator::make($request->all(), [
+                'status'=>['required']
+            ]);
+
+            if ($validation->fails()) return $this->error($validation->errors()->all());
+
+            if($request->status == 'approve') $doc->status = $request->status;
+            else $doc->status = 'reject';
+
+            $doc->save();
+
+            DB::commit();
+
+            return $this->success('Document status successfully updated.', []);
+        } catch (Exception $e) {
+            DB::rollback();
+            return $this->error($e->getMessage());
+        }
     }
 
     /**
