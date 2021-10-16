@@ -421,6 +421,7 @@ Route::prefix('/v1')->group(function () {
         Route::delete('/cart', 'Api\UserController@deleteCheckedCart');
 
         Route::get('/documents/user/{id}', 'Api\DocumentController@showByUserId');
+        Route::get('/documents', 'Api\DocumentController@index');
         Route::post('/documents', 'Api\DocumentController@store');
         Route::delete('/documents/{id}', 'Api\DocumentController@destroy');
         

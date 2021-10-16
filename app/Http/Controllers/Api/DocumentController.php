@@ -22,7 +22,16 @@ class DocumentController extends Controller
      */
     public function index()
     {
-        //
+        DB::beginTransaction();
+        try {
+            if(request()->page) $docs = Document::with(['documentable'])->paginate(request()->per_page ?? 10);
+            else $docs = Document::with(['documentable'])->get();
+
+            return $this->success('Successfully get all the documents.', $docs);
+        } catch (Exception $e) {
+            DB::rollback();
+            return $this->error($e->getMessage());
+        }
     }
 
     /**
