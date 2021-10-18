@@ -27,14 +27,16 @@ class OrderRepository implements OrderInterface
                 'status'=>$request->status,
             ];
             $rules = [
-                'order_id'=>['required','exists:purchase_items,id',function($attr,$value,$fail) use($user){
-                    // admin can update any status
-                    if(!$user->hasRole('administrator')) {
-                        if(!PurchaseItem::where('id',$value)->where('user_id',$user->id)->count()) {
-                            $fail('You dont have permission to update this order.');
-                        }
-                    }
-                }],
+                'order_id'=>['required','exists:purchase_items,id'
+                // ,function($attr,$value,$fail) use($user){
+                //     // admin can update any status
+                //     if(!$user->hasRole('administrator')) {
+                //         if(!PurchaseItem::where('id',$value)->where('user_id',$user->id)->count()) {
+                //             $fail('You dont have permission to update this order.');
+                //         }
+                //     }
+                // }
+                ],
                 'status'=>['sometimes',function($attr,$value,$fail) {
                     if(!in_array($value,config('purchase_statuses.status.v1'))) $fail('Status not found!');
                 }]
